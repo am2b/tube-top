@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+script=$(basename "$0")
+
 #dirs:
 root_dir="${HOME}"/.tube-top
 books_dir="${root_dir}"/books
@@ -28,34 +30,31 @@ cache_lines_number=1000
 #current_book_progress=""
 
 usage() {
-    local script
-    script=$(basename "$0")
-    echo "Usage:"
+    echo "usage:"
     echo "${script} -h:show usage"
-    #echo "${script} -i:init tube-top"
     #initialize a book and start reading from the beginning
-    echo "${script} -b book_file:init a book to read from the beginning"
+    echo "${script} -i book_file:init a book to read from the beginning"
     #pick up a book you've read before and continue reading
-    echo "${script} -r book_name:read a book"
+    echo "${script} -s book_name:start to read a book"
     echo "${script} -j line_number:jump to line_number"
     echo "${script} -d book_name:delete a book"
-    echo "${script}:print tube top in terminal"
+    echo "${script}:continue reading where you left off"
     echo "${script} -l:list the books you have read"
     echo "${script} -c:clear all settings and caches"
     exit 0
 }
 
 parse_options() {
-    while getopts ":hb:r:j:d:lc" opt; do
+    while getopts ":hi:s:j:d:lc" opt; do
         case "${opt}" in
         h)
             usage
             ;;
-        b)
+        i)
             init_book "$OPTARG"
             ;;
-        r)
-            pickup_book "$OPTARG"
+        s)
+            start_to_read "$OPTARG"
             ;;
         j)
             jump_to_line "$OPTARG"
@@ -217,6 +216,12 @@ _cache() {
 }
 
 init_book() {
+    if (( $# != 1)); then
+        echo "init a book to read from the beginning:"
+        echo "$script -i book_file"
+        exit 1
+    fi
+
     local book_file="${1}"
 
     if [[ ! -f "${tube_top}" ]]; then
@@ -252,13 +257,31 @@ init_book() {
     total_lines=$(wc -l <"${1}" | xargs)
     current_line=1
     _add_book_in_tube_top "${book_name}" "${total_lines}" "${current_line}" false
-
-    #make a cache of this book
-    #_cache "${book_name}"
 }
 
-pickup_book() {
-    #change the reading status of other books to false, and set the reading status of this book to true
+start_to_read() {
+    if (( $# != 1)); then
+        echo "start to read a book:"
+        echo "$script -s book_name"
+        exit 1
+    fi
+
+    book_name="${1}"
+
+    if ! _query_book_in_tube_top "${book_name}" > /dev/null; then
+        echo "the book:${book_name} you chose to read is not in the library"
+        echo "you should init a book first:"
+        echo "$script -i book_file"
+        exit 1
+    fi
+
+    #change the reading status of other books to false
+    sed -i '' -E 's/^(([^,]*,){3})[^,]*/\1false/' "${tube_top}"
+    #set the reading status of this book to true
+    _update_book_in_tube_top "${book_name}" 4 true
+
+    #make a cache of this book
+    _cache "${book_name}"
 }
 
 #print() {
