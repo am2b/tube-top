@@ -206,11 +206,15 @@ _cache() {
         fi
 
         local book_file
-        book_file=$(_get_book_file "${book_name}")
+        if ! book_file=$(_get_book_file "${book_name}"); then
+            echo "error:the book file:${book_file} was not found in ${books_dir} when caching"
+            exit 1
+        fi
+
         local book_cache_file="${cache_dir}"/"${book_name}"
         awk "NR>=${current_line} && NR<${current_line}+${cache_lines_count}" "${book_file}" >"${book_cache_file}"
     else
-        echo "error:the book:${book_name} was not found when caching"
+        echo "error:the book:${book_name} was not found in ${tube_top} when caching"
         exit 1
     fi
 }
