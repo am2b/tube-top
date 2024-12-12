@@ -8,12 +8,13 @@ books_dir="${root_dir}"/books
 cache_dir="${root_dir}"/cache
 #progress_dir="${root_dir}"/progress
 
-#files:
-#the base name of current book
-#book_name=""
+declare -A tube_top_columns
+tube_top_columns["book_name"]=1
+tube_top_columns["reading"]=2
+tube_top_columns["total_lines"]=3
+tube_top_columns["current_line"]=4
 
-#the structure of "${tube_top}"
-#book name,total lines,current line,reading
+#records of books
 tube_top="${root_dir}"/tube_top
 
 #by default,10 lines are printed
