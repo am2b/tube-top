@@ -18,17 +18,25 @@ tube_top_columns["current_line"]=4
 tube_top="${root_dir}"/tube_top
 
 #by default,10 lines are printed
-show_lines_number=10
+#show_lines_number=10
+show_lines_number=2
 
-cache_lines_number=1000
-#real book file
-#current_book=""
-#real book's cache file
-#current_book_cache=""
-#a text file to record the progress of all books
-#books_progress="${progress_dir}"/books.txt
-#a text file to record the progress of current book
-#current_book_progress=""
+#cache_lines_number=1000
+cache_lines_number=10
+
+required_tools() {
+    local tools=("sed" "awk")
+    for tool in "${tools[@]}"; do
+        if ! command -v "$tool" >/dev/null 2>&1; then
+            echo "$tool 未安装,请安装 GNU Coreutils"
+            exit 1
+        fi
+        if ! "$tool" --version 2>/dev/null | grep -q "GNU"; then
+            echo "$tool 不是 GNU Coreutils 版本,请安装正确版本"
+            exit 1
+        fi
+    done
+}
 
 usage() {
     echo "usage:"
