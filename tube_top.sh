@@ -395,7 +395,13 @@ print() {
     fi
 
     if [[ "${show_lines_real_number}" -ne 0 ]]; then
-        tail -n +"${current_cache_line}" "${book_cache_file}" | head -n "${show_lines_real_number}"
+        #without line number
+        #tail -n +"${current_cache_line}" "${book_cache_file}" | head -n "${show_lines_real_number}"
+        #with line number
+        #nl -v$((current_line - total_cache_lines)) "${book_cache_file}" | tail -n +"${current_cache_line}" | head -n "${show_lines_real_number}"
+        #with line number
+        awk -v start="$current_cache_line" -v number="$show_lines_real_number" -v origin_current_line="$current_line" -v cache_total_lines="$total_cache_lines" 'NR>=start && NR<(start + number) {print (origin_current_line - cache_total_lines - 1 + NR), $0}' "${book_cache_file}"
+
         #update current cache line
         current_cache_line=$((current_cache_line + show_lines_real_number))
         _update_book_in_tube_top "${book_name}" 6 "${current_cache_line}"
