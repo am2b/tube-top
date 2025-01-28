@@ -40,13 +40,14 @@ usage() {
     echo "${script} -j -lines:jump forward lines"
 
     echo "${script} -d book_name:delete a book"
-    echo "${script} -l:list the books you have read"
-    echo "${script} -c:clear all settings and caches"
+    echo "${script} -l list the books you have read"
+    echo "${script} -r reset a book you have read"
+    echo "${script} -c clear all settings and caches"
     exit 0
 }
 
 parse_options() {
-    while getopts ":hi:s:j:d:lc" opt; do
+    while getopts ":hi:s:j:d:lr:c" opt; do
         #while getopts ":hi:j:d:lc" opt; do
         case "${opt}" in
         h)
@@ -66,6 +67,9 @@ parse_options() {
             ;;
         l)
             list_finished_books
+            ;;
+        r)
+            reset_book "$OPTARG"
             ;;
         c)
             clear
@@ -469,6 +473,19 @@ print() {
 list_finished_books() {
     #表示finish的true或false位于第7列
     sed -n '/^\([^,]*,\)\{6\}true/p' "${tube_top}" | cut -d',' -f1
+}
+
+#重置一本已经读完的书(使其处于未读的状态)
+reset_book() {
+    local book_name="${1}"
+    _update_book_in_tube_top "${book_name}" 2 false
+    _update_book_in_tube_top "${book_name}" 4 1
+    _update_book_in_tube_top "${book_name}" 5 0
+    _update_book_in_tube_top "${book_name}" 6 0
+    _update_book_in_tube_top "${book_name}" 7 false
+
+    local book_cache_file="${cache_dir}"/"${book_name}"
+    rm "${book_cache_file}"
 }
 
 main() {
