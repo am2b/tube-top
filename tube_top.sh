@@ -400,7 +400,74 @@ print() {
         #with line number
         #nl -v$((current_line - total_cache_lines)) "${book_cache_file}" | tail -n +"${current_cache_line}" | head -n "${show_lines_real_number}"
         #with line number
-        awk -v start="$current_cache_line" -v number="$show_lines_real_number" -v origin_current_line="$current_line" -v cache_total_lines="$total_cache_lines" 'NR>=start && NR<(start + number) {print (origin_current_line - cache_total_lines - 1 + NR), $0}' "${book_cache_file}"
+        #awk -v start="$current_cache_line" -v number="$show_lines_real_number" -v origin_current_line="$current_line" -v cache_total_lines="$total_cache_lines" 'NR>=start && NR<(start + number) {print (origin_current_line - cache_total_lines - 1 + NR), $0}' "${book_cache_file}"
+        #with color
+        colors=(
+            "\033[31m"       # 红色
+            "\033[32m"       # 绿色
+            "\033[33m"       # 黄色
+            "\033[34m"       # 蓝色
+            "\033[35m"       # 紫色
+            "\033[36m"       # 青色
+            "\033[91m"       # 浅红色
+            "\033[92m"       # 浅绿色
+            "\033[93m"       # 浅黄色
+            "\033[94m"       # 浅蓝色
+            "\033[95m"       # 浅紫色
+            "\033[96m"       # 浅青色
+            "\033[37m"       # 白色
+            "\033[90m"       # 灰色
+            "\033[97m"       # 亮白色
+            "\033[38;5;208m" # 橙色
+            "\033[38;5;172m" # 棕色
+            "\033[38;5;130m" # 深橙色
+            "\033[38;5;82m"  # 浅绿蓝色
+            "\033[38;5;46m"  # 鲜艳绿色
+        )
+
+        local rand_index=$((RANDOM % ${#colors[@]}))
+        local selected_color=${colors[$rand_index]}
+
+        #行号颜色(默认绿色)
+        local line_number_color="\033[32m"
+
+        local reset_color="\033[0m"
+
+        #是否打印行号(1=打印,0=不打印)
+        local print_line_number=1
+
+        #是否使用颜色(1=使用颜色,0=不使用颜色)
+        local use_color=1
+
+        awk -v start="$current_cache_line" \
+            -v number="$show_lines_real_number" \
+            -v origin_current_line="$current_line" \
+            -v cache_total_lines="$total_cache_lines" \
+            -v selected_color="$selected_color" \
+            -v line_number_color="$line_number_color" \
+            -v reset_color="$reset_color" \
+            -v print_line_number="$print_line_number" \
+            -v use_color="$use_color" \
+            '
+            NR >= start && NR < (start + number) {
+                #是否打印行号
+                if (print_line_number == 1) {
+                    if (use_color == 1) {
+                        printf "%s%d%s ", line_number_color, (origin_current_line - cache_total_lines - 1 + NR), reset_color
+                    }
+                    else {
+                        printf "%d ", (origin_current_line - cache_total_lines - 1 + NR)
+                    }
+                }
+
+                #打印内容部分
+                if (use_color == 1) {
+                    printf "%s%s%s\n", selected_color, $0, reset_color
+                }
+                else {
+                    printf "%s\n", $0
+                }
+            }' "${book_cache_file}"
 
         #update current cache line
         current_cache_line=$((current_cache_line + show_lines_real_number))
