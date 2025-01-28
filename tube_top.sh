@@ -314,12 +314,6 @@ add_book() {
 }
 
 print() {
-    if (($# != 1)); then
-        echo "start to read a book:"
-        echo "$script -s book_name"
-        exit 1
-    fi
-
     local book_name="${1}"
 
     if ! book=$(_query_book_in_tube_top "${book_name}"); then
