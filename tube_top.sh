@@ -2,6 +2,10 @@
 
 script=$(basename "$0")
 
+#config:
+CONFIG_DIR="${HOME}"/.config/tube-top
+CONFIG_FILE="${CONFIG_DIR}"/config
+
 #dirs:
 root_dir="${HOME}"/.tube-top
 books_dir="${root_dir}"/books
@@ -10,8 +14,10 @@ cache_dir="${root_dir}"/cache
 #records of books
 tube_top="${root_dir}"/tube_top
 
-cache_lines_number=10
-show_lines_number=3
+cache_lines_number=0
+show_lines_number=0
+enable_line_number=0
+enable_color=0
 
 required_tools() {
     local tools=("sed" "awk")
@@ -30,8 +36,10 @@ required_tools() {
 usage() {
     echo "usage:"
     echo "${script} -h:show usage"
+    #init tube top
+    echo "${script} -i:init tube top"
     #add a book
-    echo "${script} -i book_file:add a book"
+    echo "${script} -a book_file:add a book"
     #read a book
     echo "${script} -s book_name:read a book"
 
@@ -47,13 +55,15 @@ usage() {
 }
 
 parse_options() {
-    while getopts ":hi:s:j:d:lr:c" opt; do
-        #while getopts ":hi:j:d:lc" opt; do
+    while getopts ":hia:s:j:d:lr:c" opt; do
         case "${opt}" in
         h)
             usage
             ;;
         i)
+            tube_top_init
+            ;;
+        a)
             add_book "$OPTARG"
             ;;
         s)
@@ -83,15 +93,17 @@ parse_options() {
     shift $((OPTIND - 1))
 }
 
-_init() {
-    if [[ ! -d $root_dir ]]; then mkdir -p "${root_dir}"; fi
-    if [[ ! -d $books_dir ]]; then mkdir -p "${books_dir}"; fi
-    if [[ ! -d $cache_dir ]]; then mkdir -p "${cache_dir}"; fi
+_get_config_value() {
+    if (("$#" == 1)); then
+        local key="${1}"
+        local value
+        value=$(awk -F= -v k="$key" '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1); gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); if ($1 == k) print $2}' "${CONFIG_FILE}")
 
-    touch "${tube_top}"
-    #echo "cache_lines_number=10" >>config
-    #echo "show_lines_number=3" >>config
-    #echo "color=green" >>config
+        echo "${value}"
+        return 0
+    else
+        return 1
+    fi
 }
 
 _save_book_file() {
@@ -265,6 +277,25 @@ _cache() {
     fi
 }
 
+tube_top_init() {
+    if [[ ! -d "${CONFIG_DIR}" ]]; then
+        mkdir -p "${CONFIG_DIR}"
+    fi
+
+    if [[ ! -f "${CONFIG_FILE}" ]]; then
+        echo "cache_lines_number=10" >>"${CONFIG_FILE}"
+        echo "show_lines_number=3" >>"${CONFIG_FILE}"
+        echo "enable_line_number=1" >>"${CONFIG_FILE}"
+        echo "enable_color=1" >>"${CONFIG_FILE}"
+    fi
+
+    if [[ ! -d $root_dir ]]; then mkdir -p "${root_dir}"; fi
+    if [[ ! -d $books_dir ]]; then mkdir -p "${books_dir}"; fi
+    if [[ ! -d $cache_dir ]]; then mkdir -p "${cache_dir}"; fi
+
+    if [[ ! -f "${tube_top}" ]]; then touch "${tube_top}"; fi
+}
+
 add_book() {
     local book_file="${1}"
 
@@ -281,10 +312,6 @@ add_book() {
     if [[ ! -r $book_file ]]; then
         echo "$book_file is unreadable"
         exit 1
-    fi
-
-    if [[ ! -f "${tube_top}" ]]; then
-        _init
     fi
 
     _save_book_file "${book_file}"
@@ -305,6 +332,12 @@ add_book() {
 }
 
 print() {
+    #从config中读取值
+    cache_lines_number=$(_get_config_value "cache_lines_number")
+    show_lines_number=$(_get_config_value "show_lines_number")
+    enable_line_number=$(_get_config_value "enable_line_number")
+    enable_color=$(_get_config_value "enable_color")
+
     local book_name="${1}"
 
     if ! book=$(_query_book_in_tube_top "${book_name}"); then
@@ -346,6 +379,7 @@ print() {
 
     if [[ "${finish}" == true ]]; then
         echo "You have finished the book:${book_name}"
+        echo "You can reset the book:tube_top.sh -r ${book_name}"
         exit 0
     fi
 
@@ -418,12 +452,6 @@ print() {
 
         local reset_color="\033[0m"
 
-        #是否打印行号(1=打印,0=不打印)
-        local print_line_number=1
-
-        #是否使用颜色(1=使用颜色,0=不使用颜色)
-        local use_color=1
-
         awk -v start="$current_cache_line" \
             -v number="$show_lines_real_number" \
             -v origin_current_line="$current_line" \
@@ -431,13 +459,13 @@ print() {
             -v selected_color="$selected_color" \
             -v line_number_color="$line_number_color" \
             -v reset_color="$reset_color" \
-            -v print_line_number="$print_line_number" \
-            -v use_color="$use_color" \
+            -v enable_line_number="$enable_line_number" \
+            -v enable_color="$enable_color" \
             '
             NR >= start && NR < (start + number) {
                 #是否打印行号
-                if (print_line_number == 1) {
-                    if (use_color == 1) {
+                if (enable_line_number == 1) {
+                    if (enable_color == 1) {
                         printf "%s%d%s ", line_number_color, (origin_current_line - cache_total_lines - 1 + NR), reset_color
                     }
                     else {
@@ -446,7 +474,7 @@ print() {
                 }
 
                 #打印内容部分
-                if (use_color == 1) {
+                if (enable_color == 1) {
                     printf "%s%s%s\n", selected_color, $0, reset_color
                 }
                 else {
