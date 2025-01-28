@@ -65,7 +65,7 @@ parse_options() {
             delete_book "$OPTARG"
             ;;
         l)
-            list_books
+            list_finished_books
             ;;
         c)
             clear
@@ -160,13 +160,6 @@ _query_the_reading_book_in_tube_top() {
     else
         return 1
     fi
-}
-
-#列出已经读完的书
-_list_the_finished_book_in_tube_top() {
-    local result
-    #表示finish的true或false位于第7列
-    sed -n '/^\([^,]*,\)\{6\}true,/p' "${tube_top}"
 }
 
 _add_book_in_tube_top() {
@@ -476,6 +469,12 @@ print() {
     fi
 
     return 0
+}
+
+#列出已经读完的书
+list_finished_books() {
+    #表示finish的true或false位于第7列
+    sed -n '/^\([^,]*,\)\{6\}true/p' "${tube_top}" | cut -d',' -f1
 }
 
 main() {
