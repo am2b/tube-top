@@ -262,12 +262,6 @@ _cache() {
 }
 
 add_book() {
-    if (($# != 1)); then
-        echo "init a book to read from the beginning:"
-        echo "$script -i book_file"
-        exit 1
-    fi
-
     local book_file="${1}"
 
     if [[ ! -f $book_file ]]; then
