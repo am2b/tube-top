@@ -24,16 +24,20 @@ usage() {
     #print
     echo "${script} -p book_name:print lines"
     #list
-    echo "${script} -l list the books you have read"
+    echo "${script} -l:list the books you have read"
     #reset
     echo "${script} -r book_name:reset a book you have read"
     #delete
     echo "${script} -d book_name:delete a book"
+    #jump
+    echo "${script} -j line_number:jump to line_number"
+    echo "${script} -j +lines:jump backward lines"
+    echo "${script} -j -lines:jump forward lines"
     exit 0
 }
 
 parse_options() {
-    while getopts ":ha:p:lr:d:" opt; do
+    while getopts ":ha:p:lr:d:j:" opt; do
         case "${opt}" in
         h)
             usage
@@ -52,6 +56,9 @@ parse_options() {
             ;;
         d)
             delete_book "$OPTARG"
+            ;;
+        j)
+            jump "$OPTARG"
             ;;
         *)
             usage
