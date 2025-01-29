@@ -86,7 +86,5 @@ _do_print() {
 
         #update current cache line
         CACHE_CUR_LINE=$((CACHE_CUR_LINE + show_lines_real_number))
-        #_update_book_in_tube_top 6 "${cache_cur_line}"
-        _debug_write_record_to_tupe_top
     fi
 }
