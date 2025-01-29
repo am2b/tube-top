@@ -27,11 +27,13 @@ usage() {
     echo "${script} -l list the books you have read"
     #reset
     echo "${script} -r book_name:reset a book you have read"
+    #delete
+    echo "${script} -d book_name:delete a book"
     exit 0
 }
 
 parse_options() {
-    while getopts ":ha:p:r:l" opt; do
+    while getopts ":ha:p:lr:d:" opt; do
         case "${opt}" in
         h)
             usage
@@ -42,11 +44,14 @@ parse_options() {
         p)
             print "$OPTARG"
             ;;
+        l)
+            list_finished_books
+            ;;
         r)
             reset_book "$OPTARG"
             ;;
-        l)
-            list_finished_books
+        d)
+            delete_book "$OPTARG"
             ;;
         *)
             usage

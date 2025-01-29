@@ -130,6 +130,9 @@ print() {
 list_finished_books() {
     #表示finish的true或false位于第7列
     sed -n '/^\([^,]*,\)\{6\}true/p' "${TUBE_TOP}" | cut -d',' -f1
+
+    #仅查询,无需写入记录
+    exit 0
 }
 
 #重置一本已经读完的书(使其处于未读的状态)
@@ -142,7 +145,20 @@ reset_book() {
     CACHE_CUR_LINE=0
     FINISH=false
 
-    rm "${BOOK_CACHE_FILE}"
+    if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
+}
+
+delete_book() {
+    BOOK_NAME="${1}"
+    BOOK_FILE="${BOOKS_DIR}"/"${BOOK_NAME}"
+    BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
+
+    if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
+    if [[ -f "${BOOK_FILE}" ]]; then rm "${BOOK_FILE}"; fi
+    _delete_book_from_tube_top
+
+    #避免再次将记录写入
+    exit 0
 }
 
 main() {
