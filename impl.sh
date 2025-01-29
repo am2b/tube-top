@@ -106,7 +106,6 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
         #update current line in the entire book
         CUR_LINE=$((CUR_LINE + cache_lines_count))
-        _debug_write_record_to_tupe_top
     }
 
     _tube_top_init() {
@@ -151,9 +150,5 @@ if [[ -z "$IMPL_LOADED" ]]; then
     _write_record_to_tupe_top() {
         _delete_book_from_tube_top
         echo "${BOOK_NAME}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >>"${TUBE_TOP}"
-    }
-
-    _debug_write_record_to_tupe_top() {
-        _write_record_to_tupe_top
     }
 fi

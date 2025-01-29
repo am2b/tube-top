@@ -137,7 +137,6 @@ print() {
 
         #set the reading status of this book to true
         READING=true
-        _debug_write_record_to_tupe_top
     fi
 
     #需要做cache的3中情形:
@@ -161,11 +160,10 @@ print() {
             if ((cache_left_lines < show_lines_number)); then
                 #原始文件里是否还有剩余的行数来支持回退
                 local origin_left_lines
-                origin_left_lines=$((TOTAL_LINES - CUR_LINE))
+                origin_left_lines=$((TOTAL_LINES - CUR_LINE + 1))
                 if ((origin_left_lines > 0)); then
                     CUR_LINE=$((CUR_LINE - cache_left_lines))
                     #_update_book_in_tube_top 4 "${cur_line}"
-                    _debug_write_record_to_tupe_top
                     echo "cache 3"
                     _cache
                 fi
@@ -178,7 +176,6 @@ print() {
     #update the finish flag
     if [[ "${CUR_LINE}" -gt "${TOTAL_LINES}" && "${CACHE_CUR_LINE}" -gt "${CACHE_TOTAL_LINES}" ]]; then
         FINISH=true
-        _debug_write_record_to_tupe_top
         echo "You have finished the book:${BOOK_NAME}"
         exit 0
     fi
