@@ -22,9 +22,10 @@ usage() {
     #add a book
     echo "${script} -a book_file:add a book"
     #print
-    echo "${script} -p book_name:read a book"
-
+    echo "${script} -p book_name:print lines"
+    #list
     echo "${script} -l list the books you have read"
+    #reset
     echo "${script} -r book_name:reset a book you have read"
     exit 0
 }
