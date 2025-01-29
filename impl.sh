@@ -51,39 +51,6 @@ if [[ -z "$IMPL_LOADED" ]]; then
         fi
     }
 
-    _update_book_in_tube_top() {
-        local modify_column="${1}"
-        local new_value="${2}"
-
-        if book=$(_query_book_in_tube_top); then
-            IFS=',' read -r -a parts <<<"${book}"
-
-            #check if $modify_column is valid
-            if ((modify_column <= 0)) || ((modify_column > ${#parts[@]})); then
-                echo "error:invalid column:${modify_column}"
-                exit 1
-            fi
-
-            #modify
-            local index=$((modify_column - 1))
-            parts[index]="${new_value}"
-
-            #concatenate arrays using commas
-            updated_book=$(
-                IFS=','
-                echo "${parts[*]}"
-            )
-
-            _delete_book_from_tube_top
-
-            #append book to tube top
-            echo "${updated_book}" >>"${TUBE_TOP}"
-        else
-            echo "error:the book:${BOOK_NAME} was not found,when updating in ${TUBE_TOP}"
-            exit 1
-        fi
-    }
-
     _cache() {
         local cache_lines_count
         #check if cur_line+cache_lines_number exceeds the total lines
