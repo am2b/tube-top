@@ -67,8 +67,11 @@ print() {
         exit 1
     fi
 
+    local book
     local last_reading_book_name
-    last_reading_book_name=$(_query_the_reading_book_in_tube_top)
+    book=$(_query_the_reading_book_in_tube_top)
+    IFS=',' read -r -a parts <<<"${book}"
+    last_reading_book_name="${parts[0]}"
     if [[ "${BOOK_NAME}" != "${last_reading_book_name}" ]]; then
         #change the reading status of other books to false
         #-E:启用扩展正则表达式(ERE),使正则表达式语法更简洁(无需转义括号()等)
