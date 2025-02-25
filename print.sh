@@ -121,12 +121,12 @@ print() {
 
     #刚开始读该书(还没有cache)
     if [[ ! -f "${BOOK_CACHE_FILE}" ]]; then
-        echo "cache 1"
+        #echo "cache 1"
         _cache
     else
         #cache的行数是show_lines_number的整数倍
         if ((CACHE_CUR_LINE > CACHE_TOTAL_LINES)); then
-            echo "cache 2"
+            #echo "cache 2"
             _cache
         else
             #需要回退(剩下的行数小于show_lines_number)
@@ -138,7 +138,7 @@ print() {
                 origin_left_lines=$((TOTAL_LINES - CUR_LINE + 1))
                 if ((origin_left_lines > 0)); then
                     CUR_LINE=$((CUR_LINE - cache_left_lines))
-                    echo "cache 3"
+                    #echo "cache 3"
                     _cache
                 fi
             fi
