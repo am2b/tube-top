@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+#shellcheck disable=SC2034
+
 if [[ -z "$GLOBAL_VARIABLES_LOADED" ]]; then
     export GLOBAL_VARIABLES_LOADED=1
 
