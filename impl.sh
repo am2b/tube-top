@@ -19,6 +19,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         fi
     }
 
+    #根据全局变量BOOK_NAME来查询其record
     _query_book_in_tube_top() {
         local result
         result=$(sed -n "/^$BOOK_NAME,/p" "${TUBE_TOP}")
@@ -30,6 +31,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         fi
     }
 
+    #注意:该函数返回的是一个完整的record
     _query_the_reading_book_in_tube_top() {
         local result
         #表示reading的true或false位于第2列
@@ -102,6 +104,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         enable_color=$(_get_config_value "enable_color")
     }
 
+    #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量
     _read_record_from_tupe_top() {
         if book=$(_query_book_in_tube_top); then
             IFS=',' read -r -a parts <<<"${book}"
