@@ -26,7 +26,7 @@ usage() {
     #print
     echo "${script} -s:print lines"
     #list
-    echo "${script} -l:list the books you have read"
+    echo "${script} -l:list all books"
     #reset
     echo "${script} -r book_name:reset a book you have read"
     #delete
@@ -54,7 +54,7 @@ parse_options() {
             print
             ;;
         l)
-            list_finished_books
+            list_all_books
             ;;
         r)
             reset_book "$OPTARG"

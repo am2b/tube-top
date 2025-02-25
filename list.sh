@@ -2,12 +2,20 @@
 
 SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
-#source "${SELF_ABS_DIR}"/impl.sh
 
 #列出已经读完的书
-list_finished_books() {
-    #表示finish的true或false位于第7列
-    sed -n '/^\([^,]*,\)\{6\}true/p' "${TUBE_TOP}" | cut -d',' -f1
+list_all_books() {
+    awk -F, '{
+    output = $1;
+    if ($2 == "true" && $7 == "true") {
+        output = output " <- reading - finish";
+    } else if ($2 == "true") {
+        output = output " <- reading";
+    } else if ($7 == "true") {
+        output = output " <- finish";
+    }
+    print output;
+}' "${TUBE_TOP}"
 
     #仅查询,无需写入记录
     exit 0

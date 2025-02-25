@@ -10,6 +10,7 @@ source "${SELF_ABS_DIR}"/print.sh
 source "${SELF_ABS_DIR}"/jump.sh
 source "${SELF_ABS_DIR}"/delete.sh
 source "${SELF_ABS_DIR}"/reset.sh
+source "${SELF_ABS_DIR}"/list.sh
 
 main() {
     required_tools
