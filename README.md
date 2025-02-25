@@ -8,24 +8,14 @@ Add a book:
 tube_top.sh -a book_file
 ```
 
-Print lines:
+Pin a book:
 ```bash
 tube_top.sh -p book_name
 ```
 
-List the books you hve read:
+Print lines:
 ```bash
-tube_top.sh -l
-```
-
-Reset a book you have read:
-```bash
-tube_top.sh -r book_name
-```
-
-Delete a book:
-```bash
-tube_top.sh -d book_name
+tube_top.sh -s
 ```
 
 Jump to line_number:
@@ -41,4 +31,19 @@ tube_top.sh -j +lines
 Jump forward lines:
 ```bash
 tube_top.sh -j -lines
+```
+
+Reset a book:
+```bash
+tube_top.sh -r book_name
+```
+
+Delete a book:
+```bash
+tube_top.sh -d book_name
+```
+
+List all books:
+```bash
+tube_top.sh -l
 ```
