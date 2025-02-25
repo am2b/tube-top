@@ -100,8 +100,8 @@ if [[ -z "$IMPL_LOADED" ]]; then
         fi
 
         if [[ ! -f "${CONFIG_FILE}" ]]; then
-            echo "cache_lines_number=10" >>"${CONFIG_FILE}"
-            echo "show_lines_number=3" >>"${CONFIG_FILE}"
+            echo "cache_lines_number=1000" >>"${CONFIG_FILE}"
+            echo "show_lines_number=10" >>"${CONFIG_FILE}"
             echo "enable_line_number=1" >>"${CONFIG_FILE}"
             echo "enable_color=1" >>"${CONFIG_FILE}"
         fi
