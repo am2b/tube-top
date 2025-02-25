@@ -5,7 +5,7 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 pin() {
-    BOOK_NAME="${1}"
+    BOOK_NAME=$(basename "${1}")
 
     #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量
     _read_record_from_tupe_top
