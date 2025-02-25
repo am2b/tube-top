@@ -22,6 +22,7 @@ add_book() {
         exit 1
     fi
 
+    #BOOK_NAME中包含后缀名(basename的结果包含后缀名)
     BOOK_NAME=$(basename "${origin_file}")
     BOOK_FILE="${BOOKS_DIR}"/"${BOOK_NAME}"
 
