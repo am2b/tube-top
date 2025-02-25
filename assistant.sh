@@ -25,16 +25,17 @@ usage() {
     echo "${script} -p book_name:pin a book"
     #print
     echo "${script} -s:print lines"
-    #list
-    echo "${script} -l:list all books"
-    #reset
-    echo "${script} -r book_name:reset a book you have read"
-    #delete
-    echo "${script} -d book_name:delete a book"
     #jump
     echo "${script} -j line_number:jump to line_number"
     echo "${script} -j +lines:jump backward lines"
     echo "${script} -j -lines:jump forward lines"
+    #reset
+    echo "${script} -r book_name:reset a book you have read"
+    #delete
+    echo "${script} -d book_name:delete a book"
+    #list
+    echo "${script} -l:list all books"
+
     exit 0
 }
 
