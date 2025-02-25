@@ -45,6 +45,23 @@ if [[ -z "$IMPL_LOADED" ]]; then
         fi
     }
 
+    #注意:该函数返回的是处于阅读状态的book name
+    _get_the_reading_book_name() {
+        local book
+        local reading_book_name
+        if book=$(_query_the_reading_book_in_tube_top); then
+            IFS=',' read -r -a parts <<<"${book}"
+            reading_book_name="${parts[0]}"
+        fi
+
+        if [[ -n $reading_book_name ]]; then
+            echo "${reading_book_name}"
+            return 0
+        else
+            return 1
+        fi
+    }
+
     _delete_book_from_tube_top() {
         if ! book=$(_query_book_in_tube_top); then
             echo "error:the book:${BOOK_NAME} was not found,when deleting in ${TUBE_TOP}"

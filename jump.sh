@@ -5,13 +5,10 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 jump() {
-    local book
-    book=$(_query_the_reading_book_in_tube_top)
-    IFS=',' read -r -a parts <<<"${book}"
-    BOOK_NAME="${parts[0]}"
-    if [[ -z "${BOOK_NAME}" ]]; then
-        echo "error:no books currently being read"
-        exit 0
+    BOOK_NAME=$(_get_the_reading_book_name)
+    if [[ -z $BOOK_NAME ]]; then
+        echo "${msg_no_reading_book}"
+        exit 1
     fi
     BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
 

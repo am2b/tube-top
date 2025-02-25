@@ -21,8 +21,10 @@ usage() {
     echo "${script} -h:show usage"
     #add a book
     echo "${script} -a book_file:add a book"
+    #pin a book
+    echo "${script} -p book_name:pin a book"
     #print
-    echo "${script} -s book_name:print lines"
+    echo "${script} -s:print lines"
     #list
     echo "${script} -l:list the books you have read"
     #reset
@@ -37,7 +39,7 @@ usage() {
 }
 
 parse_options() {
-    while getopts ":ha:s:lr:d:j:" opt; do
+    while getopts ":ha:p:slr:d:j:" opt; do
         case "${opt}" in
         h)
             usage
@@ -45,8 +47,11 @@ parse_options() {
         a)
             add_book "$OPTARG"
             ;;
+        p)
+            pin "$OPTARG"
+            ;;
         s)
-            print "$OPTARG"
+            print
             ;;
         l)
             list_finished_books
