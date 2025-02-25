@@ -28,4 +28,13 @@ if [[ -z "$GLOBAL_VARIABLES_LOADED" ]]; then
     CACHE_TOTAL_LINES=0
     CACHE_CUR_LINE=0
     FINISH=false
+
+    #messages
+    msg_no_reading_book=$(
+        cat <<EOF
+error: there are no books currently being read
+usage: you can execute the following command to set the book you are reading:
+tube_top.sh -p book_name
+EOF
+    )
 fi
