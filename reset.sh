@@ -9,6 +9,7 @@ reset_book() {
     _set_BOOK_NAME_by_parameter "${1}"
 
     BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
+    if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
 
     #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量
     _read_record_from_tupe_top
@@ -19,5 +20,5 @@ reset_book() {
     CACHE_CUR_LINE=0
     FINISH=false
 
-    if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
+    _write_record_to_tupe_top
 }

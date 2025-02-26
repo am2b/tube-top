@@ -26,4 +26,6 @@ pin() {
 
     #set the reading status of this book to true
     READING=true
+
+    _write_record_to_tupe_top
 }

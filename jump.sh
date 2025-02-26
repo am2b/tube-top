@@ -59,4 +59,6 @@ jump() {
         echo "${error_message}"
         exit 1
     fi
+
+    _write_record_to_tupe_top
 }

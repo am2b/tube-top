@@ -153,7 +153,7 @@ print() {
         echo "You have finished the book:${BOOK_NAME}"
     fi
 
-    return 0
+    _write_record_to_tupe_top
 }
 
 print_last_again() {

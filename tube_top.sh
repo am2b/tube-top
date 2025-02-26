@@ -21,8 +21,6 @@ main() {
     _read_config
 
     parse_options "${@}"
-
-    _write_record_to_tupe_top
 }
 
 main "${@}"
