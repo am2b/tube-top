@@ -25,6 +25,8 @@ usage() {
     echo "${script} -p book_name:pin a book"
     #print
     echo "${script} -s:print lines"
+    #print again
+    echo "${script} -u:print last lines again"
     #jump
     echo "${script} -j line_number:jump to line_number"
     echo "${script} -j +lines:jump backward lines"
@@ -40,7 +42,7 @@ usage() {
 }
 
 parse_options() {
-    while getopts ":ha:p:slr:d:j:" opt; do
+    while getopts ":ha:p:sulr:d:j:" opt; do
         case "${opt}" in
         h)
             usage
@@ -54,8 +56,11 @@ parse_options() {
         s)
             print
             ;;
-        l)
-            list_all_books
+        u)
+            print_last_again
+            ;;
+        j)
+            jump "$OPTARG"
             ;;
         r)
             reset_book "$OPTARG"
@@ -63,8 +68,8 @@ parse_options() {
         d)
             delete_book "$OPTARG"
             ;;
-        j)
-            jump "$OPTARG"
+        l)
+            list_all_books
             ;;
         *)
             usage
