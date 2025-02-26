@@ -12,10 +12,10 @@ add_book() {
         exit 1
     fi
 
-    if ! file "${origin_file}" | grep -q "text"; then
-        echo "$origin_file is not a text file"
-        exit 1
-    fi
+    #if ! file "${origin_file}" | grep -q "text"; then
+    #    echo "$origin_file is not a text file"
+    #    exit 1
+    #fi
 
     if [[ ! -r $origin_file ]]; then
         echo "$origin_file is unreadable"
