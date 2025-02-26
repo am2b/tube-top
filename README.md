@@ -13,6 +13,11 @@ Pin a book:
 tube_top.sh -p book_name
 ```
 
+Set an alias:
+```bash
+tube_top.sh -n alias_name
+```
+
 Print lines:
 ```bash
 tube_top.sh -s
