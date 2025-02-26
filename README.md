@@ -18,6 +18,11 @@ Print lines:
 tube_top.sh -s
 ```
 
+Print last lines again:
+```bash
+tube_top.sh -u
+```
+
 Jump to line_number:
 ```bash
 tube_top.sh -j line_number
