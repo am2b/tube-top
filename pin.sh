@@ -5,12 +5,7 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 pin() {
-    BOOK_NAME=$(basename "${1}")
-
-    if ! _query_book_in_tube_top > /dev/null; then
-        echo "the book name:${BOOK_NAME} is invalid"
-        exit 1
-    fi
+    _set_BOOK_NAME_by_parameter "${1}"
 
     #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量
     _read_record_from_tupe_top

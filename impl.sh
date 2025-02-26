@@ -21,23 +21,55 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #根据全局变量BOOK_NAME来查询其record
     _query_book_in_tube_top() {
-        local result
-        result=$(sed -n "/^$BOOK_NAME,/p" "${TUBE_TOP}")
-        if [[ -n $result ]]; then
-            echo "${result}"
+        local record
+        record=$(sed -n "/^$BOOK_NAME,/p" "${TUBE_TOP}")
+        if [[ -n $record ]]; then
+            echo "${record}"
             return 0
         else
             return 1
         fi
     }
 
+    #根据参数给出的别名来查询第一列的book name
+    _get_book_name_by_alias() {
+        local alias_name
+        alias_name="${1}"
+
+        local book_name
+        book_name=$(awk -F',' -v alias_name="$alias_name" '$2 == alias_name { print $1; exit }' "${TUBE_TOP}")
+        if [[ -n $book_name ]]; then
+            echo "${book_name}"
+            return 0
+        else
+            return 1
+        fi
+    }
+
+    #根据命令行给出的参数来设置BOOK_NAME
+    _set_BOOK_NAME_by_parameter() {
+        #先假设给出的参数是book name
+        BOOK_NAME="${1}"
+
+        if ! _query_book_in_tube_top >/dev/null; then
+            #说明不是book name,有可能是别名
+            if book_name=$(_get_book_name_by_alias "${1}"); then
+                #返回值为0,说明在tube_top文件中查询到了别名
+                BOOK_NAME="${book_name}"
+            else
+                echo "invalid parameter:${1}"
+                exit 1
+            fi
+        fi
+    }
+
     #注意:该函数返回的是一个完整的record
     _query_the_reading_book_in_tube_top() {
-        local result
+        local record
         #表示reading的true位于第3列
-        result=$(sed -n '/^[^,]*,[^,]*,true,/p' "${TUBE_TOP}")
-        if [[ -n $result ]]; then
-            echo "${result}"
+        record=$(sed -n '/^[^,]*,[^,]*,true,/p' "${TUBE_TOP}")
+        if [[ -n $record ]]; then
+            echo "${record}"
             return 0
         else
             return 1
@@ -62,11 +94,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
     }
 
     _delete_book_from_tube_top() {
-        if ! book=$(_query_book_in_tube_top); then
-            echo "error:the book:${BOOK_NAME} was not found,when deleting in ${TUBE_TOP}"
-        else
-            sed -i "/^$BOOK_NAME,/d" "${TUBE_TOP}"
-        fi
+        sed -i "/^$BOOK_NAME,/d" "${TUBE_TOP}"
     }
 
     _cache() {
@@ -122,8 +150,8 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量
     _read_record_from_tupe_top() {
-        if book=$(_query_book_in_tube_top); then
-            IFS=',' read -r -a parts <<<"${book}"
+        if record=$(_query_book_in_tube_top); then
+            IFS=',' read -r -a parts <<<"${record}"
             ALIAS="${parts[1]}"
             READING="${parts[2]}"
             TOTAL_LINES="${parts[3]}"

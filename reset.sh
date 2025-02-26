@@ -6,12 +6,7 @@ source "${SELF_ABS_DIR}"/impl.sh
 
 #重置一本已经读完的书(使其处于未读的状态)
 reset_book() {
-    BOOK_NAME="${1}"
-
-    if ! _query_book_in_tube_top > /dev/null; then
-        echo "the book name:${BOOK_NAME} is invalid"
-        exit 1
-    fi
+    _set_BOOK_NAME_by_parameter "${1}"
 
     BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
 

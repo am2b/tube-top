@@ -5,12 +5,7 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 delete_book() {
-    BOOK_NAME="${1}"
-
-    if ! _query_book_in_tube_top > /dev/null; then
-        echo "the book name:${BOOK_NAME} is invalid"
-        exit 1
-    fi
+    _set_BOOK_NAME_by_parameter "${1}"
 
     BOOK_FILE="${BOOKS_DIR}"/"${BOOK_NAME}"
     BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
