@@ -22,7 +22,9 @@ usage() {
     #add a book
     echo "${script} -a book_file:add a book"
     #pin a book
-    echo "${script} -p book_name:pin a book"
+    echo "${script} -p book_name/alias:pin a book"
+    #set alias
+    echo "${script} -n alias:set an alias"
     #print
     echo "${script} -s:print lines"
     #print again
@@ -32,9 +34,9 @@ usage() {
     echo "${script} -j +lines:jump backward lines"
     echo "${script} -j -lines:jump forward lines"
     #reset
-    echo "${script} -r book_name:reset a book you have read"
+    echo "${script} -r book_name/alias:reset a book you have read"
     #delete
-    echo "${script} -d book_name:delete a book"
+    echo "${script} -d book_name/alias:delete a book"
     #list
     echo "${script} -l:list all books"
 
@@ -42,7 +44,7 @@ usage() {
 }
 
 parse_options() {
-    while getopts ":ha:p:sulr:d:j:" opt; do
+    while getopts ":ha:p:n:sulr:d:j:" opt; do
         case "${opt}" in
         h)
             usage
@@ -52,6 +54,9 @@ parse_options() {
             ;;
         p)
             pin "$OPTARG"
+            ;;
+        n)
+            set_alias "$OPTARG"
             ;;
         s)
             print

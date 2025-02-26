@@ -36,14 +36,9 @@ add_book() {
     cp "${origin_file}" "${BOOK_FILE}"
 
     #register this book
-    READING=false
     TOTAL_LINES=$(wc -l <"${BOOK_FILE}" | xargs)
-    CUR_LINE=1
-    CACHE_TOTAL_LINES=0
-    CACHE_CUR_LINE=0
-    FINISH=false
 
-    echo "${BOOK_NAME}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >>"${TUBE_TOP}"
+    echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >>"${TUBE_TOP}"
 
-    return 0
+    exit 0
 }

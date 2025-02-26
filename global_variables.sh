@@ -24,9 +24,10 @@ if [[ -z "$GLOBAL_VARIABLES_LOADED" ]]; then
     #records of books
     TUBE_TOP="${ROOT_DIR}"/tube_top
     BOOK_NAME=""
+    ALIAS="none"
     READING=false
     TOTAL_LINES=0
-    CUR_LINE=0
+    CUR_LINE=1
     CACHE_TOTAL_LINES=0
     CACHE_CUR_LINE=0
     FINISH=false

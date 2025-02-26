@@ -7,11 +7,11 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 list_all_books() {
     awk -F, '{
     output = $1;
-    if ($2 == "true" && $7 == "true") {
+    if ($3 == "true" && $8 == "true") {
         output = output " <- reading - finish";
-    } else if ($2 == "true") {
+    } else if ($3 == "true") {
         output = output " <- reading";
-    } else if ($7 == "true") {
+    } else if ($8 == "true") {
         output = output " <- finish";
     }
     print output;

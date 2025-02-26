@@ -34,9 +34,8 @@ if [[ -z "$IMPL_LOADED" ]]; then
     #注意:该函数返回的是一个完整的record
     _query_the_reading_book_in_tube_top() {
         local result
-        #表示reading的true或false位于第2列
-        #\([^,]*,\):匹配一个组,即非逗号的字符([^,])的0或多个重复,紧跟一个逗号(,)
-        result=$(sed -n '/^\([^,]*,\)true,/p' "${TUBE_TOP}")
+        #表示reading的true位于第3列
+        result=$(sed -n '/^[^,]*,[^,]*,true,/p' "${TUBE_TOP}")
         if [[ -n $result ]]; then
             echo "${result}"
             return 0
@@ -125,17 +124,18 @@ if [[ -z "$IMPL_LOADED" ]]; then
     _read_record_from_tupe_top() {
         if book=$(_query_book_in_tube_top); then
             IFS=',' read -r -a parts <<<"${book}"
-            READING="${parts[1]}"
-            TOTAL_LINES="${parts[2]}"
-            CUR_LINE="${parts[3]}"
-            CACHE_TOTAL_LINES="${parts[4]}"
-            CACHE_CUR_LINE="${parts[5]}"
-            FINISH="${parts[6]}"
+            ALIAS="${parts[1]}"
+            READING="${parts[2]}"
+            TOTAL_LINES="${parts[3]}"
+            CUR_LINE="${parts[4]}"
+            CACHE_TOTAL_LINES="${parts[5]}"
+            CACHE_CUR_LINE="${parts[6]}"
+            FINISH="${parts[7]}"
         fi
     }
 
     _write_record_to_tupe_top() {
         _delete_book_from_tube_top
-        echo "${BOOK_NAME}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >>"${TUBE_TOP}"
+        echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >>"${TUBE_TOP}"
     }
 fi
