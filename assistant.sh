@@ -39,12 +39,14 @@ usage() {
     echo "${script} -d book_name/alias:delete a book"
     #list
     echo "${script} -l:list all books"
+    #backup
+    echo "${script} -b:backup database file:tube_top"
 
     exit 0
 }
 
 parse_options() {
-    while getopts ":ha:p:n:sulr:d:j:" opt; do
+    while getopts ":ha:p:n:suj:r:d:lb" opt; do
         case "${opt}" in
         h)
             usage
@@ -75,6 +77,9 @@ parse_options() {
             ;;
         l)
             list_all_books
+            ;;
+        b)
+            backup
             ;;
         *)
             usage

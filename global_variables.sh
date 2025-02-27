@@ -12,6 +12,7 @@ if [[ -z "$GLOBAL_VARIABLES_LOADED" ]]; then
     show_lines_number=0
     enable_line_number=0
     enable_color=0
+    backup_dir=""
 
     #dirs:
     ROOT_DIR="${HOME}"/.tube-top

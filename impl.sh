@@ -131,6 +131,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
             echo "show_lines_number=10" >>"${CONFIG_FILE}"
             echo "enable_line_number=1" >>"${CONFIG_FILE}"
             echo "enable_color=1" >>"${CONFIG_FILE}"
+            echo "backup_dir=$HOME/backups/tube-top" >>"${CONFIG_FILE}"
         fi
 
         if [[ ! -d $ROOT_DIR ]]; then mkdir -p "${ROOT_DIR}"; fi
@@ -146,6 +147,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         show_lines_number=$(_get_config_value "show_lines_number")
         enable_line_number=$(_get_config_value "enable_line_number")
         enable_color=$(_get_config_value "enable_color")
+        backup_dir=$(_get_config_value "backup_dir")
     }
 
     #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量

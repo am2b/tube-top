@@ -57,3 +57,8 @@ List all books:
 ```bash
 tube_top.sh -l
 ```
+
+Backup database file:
+```bash
+tube_top.sh -b
+```
