@@ -134,6 +134,39 @@ if [[ -z "$IMPL_LOADED" ]]; then
         fi
     }
 
+    #注意:该函数返回的是一个完整的record
+    _query_the_previous_reading_book_in_tube_top() {
+        local record
+        local reading_field_num
+        reading_field_num=$(_get_field_num "READING")
+
+        record=$(awk -F, -v reading_field_num="$reading_field_num" '$(reading_field_num) == "previous"' "${TUBE_TOP}")
+
+        if [[ -n $record ]]; then
+            echo "${record}"
+            return 0
+        else
+            return 1
+        fi
+    }
+
+    #注意:该函数返回的是上一本被阅读的书的book name
+    _get_the_previous_reading_book_name() {
+        local book
+        local previous_reading_book_name
+        if book=$(_query_the_previous_reading_book_in_tube_top); then
+            IFS=',' read -r -a parts <<<"${book}"
+            previous_reading_book_name="${parts[0]}"
+        fi
+
+        if [[ -n $previous_reading_book_name ]]; then
+            echo "${previous_reading_book_name}"
+            return 0
+        else
+            return 1
+        fi
+    }
+
     #修改匹配BOOK_NAME的record的某一个字段
     #注意:参数要用双引号扩起来,以仅表达字符串而不是全局变量
     _update_field_in_tube_top() {

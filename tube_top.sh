@@ -7,6 +7,7 @@ source "${SELF_ABS_DIR}"/impl.sh
 source "${SELF_ABS_DIR}"/add.sh
 source "${SELF_ABS_DIR}"/pin.sh
 source "${SELF_ABS_DIR}"/set_alias.sh
+source "${SELF_ABS_DIR}"/quickly_switch.sh
 source "${SELF_ABS_DIR}"/print.sh
 source "${SELF_ABS_DIR}"/jump.sh
 source "${SELF_ABS_DIR}"/delete.sh

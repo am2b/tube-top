@@ -33,6 +33,8 @@ usage() {
     echo "${script} -p book_name/alias:pin a book"
     #set alias
     echo "${script} -n alias:set an alias"
+    #quickly switch
+    echo "${script} -q:quickly switch to the previous book"
     #print
     echo "${script} -s:print lines"
     #print again
@@ -54,7 +56,7 @@ usage() {
 }
 
 parse_options() {
-    while getopts ":ha:p:n:suj:r:d:lb" opt; do
+    while getopts ":ha:p:n:qsuj:r:d:lb" opt; do
         case "${opt}" in
         h)
             usage
@@ -67,6 +69,9 @@ parse_options() {
             ;;
         n)
             set_alias "$OPTARG"
+            ;;
+        q)
+            quickly_switch
             ;;
         s)
             print

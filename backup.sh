@@ -52,7 +52,5 @@ backup() {
     cp "${TUBE_TOP}" "${backup_dir}"/"${backup_name}"
 
     #删除旧的备份文件
-    delete_old_files "${backup_dir}" 10
-
-    exit 0
+    delete_old_files "${backup_dir}" 25
 }
