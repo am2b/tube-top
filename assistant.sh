@@ -14,6 +14,14 @@ required_tools() {
             exit 1
         fi
     done
+
+    tools=("trash")
+    for tool in "${tools[@]}"; do
+        if ! command -v "$tool" >/dev/null 2>&1; then
+            echo "$tool 未安装"
+            exit 1
+        fi
+    done
 }
 
 usage() {
