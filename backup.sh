@@ -6,7 +6,7 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 delete_old_files() {
     local dest_dir
     local keep_num
-    dest_dir="${1}"
+    dest_dir=$(realpath "${1}")
     keep_num="${2}"
 
     exclude_files_dirs=(".DS_Store" ".git")
