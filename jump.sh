@@ -25,10 +25,11 @@ jump() {
         local cache_down_lines
         cache_down_lines=$((CACHE_TOTAL_LINES - CACHE_CUR_LINE + 1))
         if ((cache_down_lines >= number_without_sign)); then
-            CACHE_CUR_LINE=$((CACHE_CUR_LINE + number_without_sign - 1))
+            CACHE_CUR_LINE=$((CACHE_CUR_LINE + number_without_sign))
+            _write_record_to_tupe_top
             return 0
         else
-            number=$((CUR_LINE - 1 + number_without_sign - cache_down_lines))
+            number=$((CUR_LINE + number_without_sign - cache_down_lines))
         fi
     elif [[ "$number" =~ ^-[0-9]+$ ]]; then
         #向前跳
@@ -37,10 +38,11 @@ jump() {
         local cache_up_lines
         cache_up_lines=$((CACHE_CUR_LINE - 1))
         if ((cache_up_lines >= number_without_sign)); then
-            CACHE_CUR_LINE=$((CACHE_CUR_LINE - number_without_sign - 1))
+            CACHE_CUR_LINE=$((CACHE_CUR_LINE - number_without_sign))
+            _write_record_to_tupe_top
             return 0
         else
-            number=$((CUR_LINE - 1 - CACHE_TOTAL_LINES + cache_up_lines - number_without_sign))
+            number=$((CUR_LINE - CACHE_TOTAL_LINES + cache_up_lines - number_without_sign))
         fi
     fi
 
@@ -55,10 +57,9 @@ jump() {
         CACHE_TOTAL_LINES=0
         CACHE_CUR_LINE=0
         FINISH=false
+        _write_record_to_tupe_top
     else
         echo "${error_message}"
         exit 1
     fi
-
-    _write_record_to_tupe_top
 }
