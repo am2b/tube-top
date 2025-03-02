@@ -21,10 +21,10 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #注意:参数要用双引号扩起来,以仅表达字符串而不是全局变量
     _get_field_num() {
-        local field
-        field="${1}"
+        local field_name
+        field_name="${1}"
 
-        case "${field}" in
+        case "${field_name}" in
         "BOOK_NAME")
             echo 1
             ;;
@@ -73,7 +73,9 @@ if [[ -z "$IMPL_LOADED" ]]; then
         alias_name="${1}"
 
         local book_name
-        book_name=$(awk -F',' -v alias_name="$alias_name" '$2 == alias_name { print $1; exit }' "${TUBE_TOP}")
+        local alias_field_num
+        alias_field_num=$(_get_field_num "ALIAS")
+        book_name=$(awk -F',' -v alias_field_num="$alias_field_num" -v alias_name="$alias_name" '$(alias_field_num) == alias_name { print $1; exit }' "${TUBE_TOP}")
         if [[ -n $book_name ]]; then
             echo "${book_name}"
             return 0
@@ -102,8 +104,11 @@ if [[ -z "$IMPL_LOADED" ]]; then
     #注意:该函数返回的是一个完整的record
     _query_the_reading_book_in_tube_top() {
         local record
-        #表示reading的true位于第3列
-        record=$(sed -n '/^[^,]*,[^,]*,true,/p' "${TUBE_TOP}")
+        local reading_field_num
+        reading_field_num=$(_get_field_num "READING")
+
+        record=$(awk -F, -v reading_field_num="$reading_field_num" '$(reading_field_num) == "true"' "${TUBE_TOP}")
+
         if [[ -n $record ]]; then
             echo "${record}"
             return 0
@@ -127,6 +132,41 @@ if [[ -z "$IMPL_LOADED" ]]; then
         else
             return 1
         fi
+    }
+
+    #修改匹配BOOK_NAME的record的某一个字段
+    #注意:参数要用双引号扩起来,以仅表达字符串而不是全局变量
+    _update_field_in_tube_top() {
+        local field_name
+        local new_value
+        field_name="${1}"
+        new_value="${2}"
+
+        local field_num
+        field_num=$(_get_field_num "${field_name}")
+        awk -F, -v book_name="$BOOK_NAME" -v field_num="$field_num" -v new_value="$new_value" '
+            BEGIN {OFS=","} 
+            $1 == book_name { $(field_num) = new_value } {print}
+        ' "${TUBE_TOP}" >tmp && mv tmp "${TUBE_TOP}"
+    }
+
+    #修改全部records的某一个字段
+    #注意:参数要用双引号扩起来,以仅表达字符串而不是全局变量
+    _update_field_of_all_records_in_tube_top() {
+        local field_name
+        local field_num
+        local new_value
+        field_name="${1}"
+        field_num=$(_get_field_num "${field_name}")
+        new_value="${2}"
+
+        awk -F, -v field_num="$field_num" -v new_value="$new_value" '
+            BEGIN {OFS=","}
+            {
+                $(field_num)=new_value
+                print
+            }
+        ' "${TUBE_TOP}" >tmp && mv tmp "${TUBE_TOP}"
     }
 
     _delete_book_from_tube_top() {

@@ -13,7 +13,7 @@ set_alias() {
         exit 1
     fi
 
-    sed -i -E "/^${BOOK_NAME},/s/^([^,]+,)[^,]+/\1${alias_name}/" "${TUBE_TOP}"
+    _update_field_in_tube_top "ALIAS" "${alias_name}"
 
     exit 0
 }
