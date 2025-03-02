@@ -18,6 +18,11 @@ Set an alias:
 tube_top.sh -n alias_name
 ```
 
+Quickly switch to the previous book:
+```bash
+tube_top.sh -q
+```
+
 Print lines:
 ```bash
 tube_top.sh -s
