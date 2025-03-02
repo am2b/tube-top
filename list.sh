@@ -4,8 +4,15 @@ SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
-#列出已经读完的书
 list_all_books() {
+    local percent
+    local cur_real_line_num
+    BOOK_NAME=$(_get_the_reading_book_name)
+    _read_record_from_tupe_top
+    cur_real_line_num=$((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - 1))
+    percent=$(echo "scale=10; $cur_real_line_num / $TOTAL_LINES * 100" | bc)
+    percent=$(echo "scale=2; $percent/1" | bc)
+
     local book_name_field_num
     local alias_field_num
     local reading_field_num
@@ -17,7 +24,8 @@ list_all_books() {
     finish_field_num=$(_get_field_num "FINISH")
 
     awk -F, -v book_name_field="$book_name_field_num" -v alias_field="$alias_field_num" \
-        -v reading_field="$reading_field_num" -v finish_field="$finish_field_num" 'BEGIN {OFS=","} 
+        -v reading_field="$reading_field_num" -v finish_field="$finish_field_num" \
+        -v percent="$percent" 'BEGIN {OFS=","} 
 {
     output = "["$(alias_field)"]" " "$(book_name_field);
     if ($(reading_field) == "true" && $(finish_field) == "true") {
@@ -25,7 +33,7 @@ list_all_books() {
     }else if ($(reading_field) == "previous" && $(finish_field) == "true") {
         output = output " <- previous reading - finish";
     } else if ($(reading_field) == "true") {
-        output = output " <- reading";
+        output = output " <- reading""["percent"%]";
     } else if ($(reading_field) == "previous") {
         output = output " <- previous reading";
     } else if ($(finish_field) == "true") {
