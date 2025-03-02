@@ -19,6 +19,42 @@ if [[ -z "$IMPL_LOADED" ]]; then
         fi
     }
 
+    #注意:参数要用双引号扩起来,以仅表达字符串而不是全局变量
+    _get_field_num() {
+        local field
+        field="${1}"
+
+        case "${field}" in
+        "BOOK_NAME")
+            echo 1
+            ;;
+        "ALIAS")
+            echo 2
+            ;;
+        "READING")
+            echo 3
+            ;;
+        "TOTAL_LINES")
+            echo 4
+            ;;
+        "CUR_LINE")
+            echo 5
+            ;;
+        "CACHE_TOTAL_LINES")
+            echo 6
+            ;;
+        "CACHE_CUR_LINE")
+            echo 7
+            ;;
+        "FINISH")
+            echo 8
+            ;;
+        *)
+            exit 1
+            ;;
+        esac
+    }
+
     #根据全局变量BOOK_NAME来查询其record
     _query_book_in_tube_top() {
         local record
