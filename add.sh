@@ -38,7 +38,7 @@ add_book() {
     #register this book
     TOTAL_LINES=$(wc -l <"${BOOK_FILE}" | xargs)
 
-    echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >>"${TUBE_TOP}"
+    _write_record_to_tupe_top
 
     exit 0
 }
