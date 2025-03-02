@@ -22,12 +22,12 @@ list_all_books() {
     output = "["$(alias_field)"]" " "$(book_name_field);
     if ($(reading_field) == "true" && $(finish_field) == "true") {
         output = output " <- reading - finish";
-    }else if ($(reading_field) == "last" && $(finish_field) == "true") {
-        output = output " <- last reading - finish";
+    }else if ($(reading_field) == "previous" && $(finish_field) == "true") {
+        output = output " <- previous reading - finish";
     } else if ($(reading_field) == "true") {
         output = output " <- reading";
-    } else if ($(reading_field) == "last") {
-        output = output " <- last reading";
+    } else if ($(reading_field) == "previous") {
+        output = output " <- previous reading";
     } else if ($(finish_field) == "true") {
         output = output " <- finish";
     }

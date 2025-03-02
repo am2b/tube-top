@@ -21,7 +21,7 @@ pin() {
     if [[ -n "${last_reading_book_name}" ]]; then
         hold_book_name="${BOOK_NAME}"
         BOOK_NAME="${last_reading_book_name}"
-        _update_field_in_tube_top "READING" last
+        _update_field_in_tube_top "READING" previous
         BOOK_NAME="${hold_book_name}"
     fi
 
