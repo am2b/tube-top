@@ -158,10 +158,10 @@ print() {
 
 print_last_again() {
     local adjust_lines_number
-    adjust_lines_number=$((show_lines_number))
+    adjust_lines_number="${show_lines_number}"
 
     #注意:不要添加双引号
-    jump -${adjust_lines_number} && _write_record_to_tupe_top
+    jump -${adjust_lines_number}
 
     print
 }
