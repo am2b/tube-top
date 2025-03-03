@@ -30,7 +30,7 @@ usage() {
     #add a book
     echo "${script} -a book_file:add a book"
     #pin a book
-    echo "${script} -p book_name/alias:pin a book"
+    echo "${script} -p book_name/alias:pin a book(note:pin for the first time,need book_name)"
     #set alias
     echo "${script} -n alias:set an alias"
     #quickly switch
@@ -38,7 +38,9 @@ usage() {
     #print
     echo "${script} -s:print lines"
     #print again
-    echo "${script} -u:print last lines again"
+    echo "${script} -g:print last lines again"
+    #page up
+    echo "${script} -u:page up"
     #jump
     echo "${script} -j line_number:jump to line_number"
     echo "${script} -j +lines:jump backward lines"
@@ -56,7 +58,7 @@ usage() {
 }
 
 parse_options() {
-    while getopts ":ha:p:n:qsuj:r:d:lb" opt; do
+    while getopts ":ha:p:n:qsguj:r:d:lb" opt; do
         case "${opt}" in
         h)
             usage
@@ -76,8 +78,11 @@ parse_options() {
         s)
             print
             ;;
-        u)
+        g)
             print_last_again
+            ;;
+        u)
+            page_up
             ;;
         j)
             jump "$OPTARG"
