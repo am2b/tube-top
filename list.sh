@@ -28,15 +28,15 @@ list_all_books() {
         -v percent="$percent" 'BEGIN {OFS=","} 
 {
     output = "["$(alias_field)"]" " "$(book_name_field);
-    if ($(reading_field) == "true" && $(finish_field) == "true") {
+    if ($reading_field == "true" && $finish_field == "true") {
         output = output " <- reading - finish";
-    }else if ($(reading_field) == "previous" && $(finish_field) == "true") {
+    }else if ($reading_field == "previous" && $finish_field == "true") {
         output = output " <- previous reading - finish";
-    } else if ($(reading_field) == "true") {
+    } else if ($reading_field == "true") {
         output = output " <- reading""["percent"%]";
-    } else if ($(reading_field) == "previous") {
+    } else if ($reading_field == "previous") {
         output = output " <- previous reading";
-    } else if ($(finish_field) == "true") {
+    } else if ($finish_field == "true") {
         output = output " <- finish";
     }
     print output;
