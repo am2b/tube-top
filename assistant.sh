@@ -45,6 +45,8 @@ usage() {
     echo "${script} -j line_number:jump to line_number"
     echo "${script} -j +lines:jump backward lines"
     echo "${script} -j -lines:jump forward lines"
+    #search pattern(search from the current line)
+    echo "${script} -f pattern:search pattern(search from the current line)"
     #reset
     echo "${script} -r book_name/alias:reset a book you have read"
     #delete
@@ -58,7 +60,7 @@ usage() {
 }
 
 parse_options() {
-    while getopts ":ha:p:n:qsguj:r:d:lb" opt; do
+    while getopts ":ha:p:n:qsguj:f:r:d:lb" opt; do
         case "${opt}" in
         h)
             usage
@@ -86,6 +88,9 @@ parse_options() {
             ;;
         j)
             jump "$OPTARG"
+            ;;
+        f)
+            search "$OPTARG"
             ;;
         r)
             reset_book "$OPTARG"

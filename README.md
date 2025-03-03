@@ -53,6 +53,11 @@ Jump forward lines:
 tube_top.sh -j -lines
 ```
 
+Search pattern(search from the current line):
+```bash
+tube_top.sh -f pattern
+```
+
 Reset a book:
 ```bash
 tube_top.sh -r book_name
