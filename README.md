@@ -30,6 +30,11 @@ tube_top.sh -s
 
 Print last lines again:
 ```bash
+tube_top.sh -g
+```
+
+Page up:
+```bash
 tube_top.sh -u
 ```
 
