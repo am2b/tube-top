@@ -46,8 +46,12 @@ _do_print() {
             "\033[38;5;46m"  # 鲜艳绿色
         )
 
-        local rand_index=$((RANDOM % ${#colors[@]}))
-        local selected_color=${colors[$rand_index]}
+        shuffle colors
+        #其实这样就可以了
+        local selected_color
+        #selected_color=${colors[0]}
+        #但是可以再随机一次(主要是因为数组中的元素数量比较少)
+        selected_color=${colors[$((RANDOM % ${#colors[@]}))]}
 
         #行号颜色(默认绿色)
         local line_number_color="\033[32m"

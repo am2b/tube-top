@@ -277,4 +277,21 @@ if [[ -z "$IMPL_LOADED" ]]; then
         _delete_book_from_tube_top
         echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >>"${TUBE_TOP}"
     }
+
+    #Fisher-Yates洗牌算法
+    #直接调用shuffle 普通数组名,传入的普通数组会被原地修改
+    shuffle() {
+        #使用nameref引用传入的数组
+        #这是bash4.3+的nameref语法,arr_ref变成了传入参数数组的引用,可以直接修改传入的数组参数本身,而不用返回值
+        #这样就不需要echo传输数组,避免了空格分割带来的问题
+        local -n arr_ref=$1
+        local i j temp
+        for ((i = ${#arr_ref[@]} - 1; i > 0; i--)); do
+            #生成随机索引
+            j=$((RANDOM % (i + 1)))
+            temp=${arr_ref[i]}
+            arr_ref[i]=${arr_ref[j]}
+            arr_ref[j]=$temp
+        done
+    }
 fi
