@@ -243,6 +243,25 @@ if [[ -z "$IMPL_LOADED" ]]; then
             echo "backup_dir=$HOME/backups/tube-top" >>"${CONFIG_FILE}"
         fi
 
+        if [[ ! -f "${COLORS_FILE}" ]]; then
+            local colors=(
+                "\033[32m"       #绿色
+                "\033[33m"       #黄色
+                "\033[34m"       #蓝色
+                "\033[35m"       #紫色
+                "\033[36m"       #青色
+                "\033[90m"       #灰色
+                "\033[38;5;22m"  #深绿色
+                "\033[38;5;24m"  #暗青蓝色
+                "\033[38;5;58m"  #橄榄色
+                "\033[38;5;88m"  #暗酒红色
+                "\033[38;5;130m" #深橙色
+                "\033[38;5;95m"  #深洋红色
+                "\033[38;5;172m" #棕色
+            )
+            printf "%s\n" "${colors[@]}" >"${COLORS_FILE}"
+        fi
+
         if [[ ! -d $ROOT_DIR ]]; then mkdir -p "${ROOT_DIR}"; fi
         if [[ ! -d $BOOKS_DIR ]]; then mkdir -p "${BOOKS_DIR}"; fi
         if [[ ! -d $CACHE_DIR ]]; then mkdir -p "${CACHE_DIR}"; fi
@@ -276,22 +295,5 @@ if [[ -z "$IMPL_LOADED" ]]; then
     _write_record_to_tupe_top() {
         _delete_book_from_tube_top
         echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >>"${TUBE_TOP}"
-    }
-
-    #Fisher-Yates洗牌算法
-    #直接调用shuffle 普通数组名,传入的普通数组会被原地修改
-    shuffle() {
-        #使用nameref引用传入的数组
-        #这是bash4.3+的nameref语法,arr_ref变成了传入参数数组的引用,可以直接修改传入的数组参数本身,而不用返回值
-        #这样就不需要echo传输数组,避免了空格分割带来的问题
-        local -n arr_ref=$1
-        local i j temp
-        for ((i = ${#arr_ref[@]} - 1; i > 0; i--)); do
-            #生成随机索引
-            j=$((RANDOM % (i + 1)))
-            temp=${arr_ref[i]}
-            arr_ref[i]=${arr_ref[j]}
-            arr_ref[j]=$temp
-        done
     }
 fi

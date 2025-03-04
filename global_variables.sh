@@ -14,6 +14,9 @@ if [[ -z "$GLOBAL_VARIABLES_LOADED" ]]; then
     enable_color=0
     backup_dir=""
 
+    #colors:
+    COLORS_FILE="${CONFIG_DIR}"/colors
+
     #dirs:
     ROOT_DIR="${HOME}"/.tube-top
     BOOKS_DIR="${ROOT_DIR}"/books

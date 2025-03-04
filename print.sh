@@ -23,35 +23,22 @@ _do_print() {
         #with line number
         #awk -v start="$CACHE_CUR_LINE" -v number="$show_lines_real_number" -v origin_current_line="$CUR_LINE" -v cache_total_lines="$CACHE_TOTAL_LINES" 'NR>=start && NR<(start + number) {print (origin_current_line - cache_total_lines - 1 + NR), $0}' "${BOOK_CACHE_FILE}"
         #with color
-        colors=(
-            "\033[31m"       # 红色
-            "\033[32m"       # 绿色
-            "\033[33m"       # 黄色
-            "\033[34m"       # 蓝色
-            "\033[35m"       # 紫色
-            "\033[36m"       # 青色
-            "\033[91m"       # 浅红色
-            "\033[92m"       # 浅绿色
-            "\033[93m"       # 浅黄色
-            "\033[94m"       # 浅蓝色
-            "\033[95m"       # 浅紫色
-            "\033[96m"       # 浅青色
-            "\033[37m"       # 白色
-            "\033[90m"       # 灰色
-            "\033[97m"       # 亮白色
-            "\033[38;5;208m" # 橙色
-            "\033[38;5;172m" # 棕色
-            "\033[38;5;130m" # 深橙色
-            "\033[38;5;82m"  # 浅绿蓝色
-            "\033[38;5;46m"  # 鲜艳绿色
-        )
-
-        shuffle colors
-        #其实这样就可以了
+        mapfile -t colors <"${COLORS_FILE}"
+        local colors_size="${#colors[@]}"
+        local color_index_file=/tmp/tube_top_color_index
+        local color_index
         local selected_color
-        #selected_color=${colors[0]}
-        #但是可以再随机一次(主要是因为数组中的元素数量比较少)
-        selected_color=${colors[$((RANDOM % ${#colors[@]}))]}
+        if [[ ! -f "${color_index_file}" ]]; then
+            echo 0 >"${color_index_file}"
+        fi
+        color_index=$(cat "${color_index_file}")
+        local next_color_index=$((color_index + 1))
+        if ((next_color_index == colors_size)); then
+            rm "${color_index_file}"
+        else
+            echo "${next_color_index}" >"${color_index_file}"
+        fi
+        selected_color=${colors[$color_index]}
 
         #行号颜色(默认绿色)
         local line_number_color="\033[32m"
