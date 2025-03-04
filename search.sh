@@ -48,7 +48,7 @@ search() {
         #第二列:蓝色的:->
         #第三列:黄色的:do jump(%-7s:左对齐,宽度为7)
         #第四列:黄色的:+line_num
-        printf "\033[32m%-6s\033[0m \033[34m->\033[0m \033[33m%-7s +%s\033[0m\n" "$origin_relative_line_num" "do jump" "$jump_line_num"
+        printf "\033[32m%-6s\033[0m \033[34m->\033[0m \033[33m%-7s +%s\033[0m\n" "$origin_relative_line_num" "do a jump" "$jump_line_num"
         echo -e "${matched_lines["$origin_relative_line_num"]}"
         echo
     done
