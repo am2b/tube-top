@@ -39,7 +39,11 @@ search() {
         matched_lines["$plain_line_num"]="$trimmed_content"
     done < <(tail -n +"${search_from_line_number}" "${BOOK_FILE}" | rg --color=always --line-number "${pattern}")
 
+    local array_size
+    array_size="${#matched_lines[@]}"
+    local counter=0
     for origin_relative_line_num in $(printf "%s\n" "${!matched_lines[@]}" | sort -n); do
+        ((counter++))
         #减1:是因为做了jump +num后,然后print的时候是从下一行开始print的
         jump_line_num=$((origin_relative_line_num - 1))
         #强迫症:按照show_lines_number的整数倍去跳转
@@ -50,7 +54,7 @@ search() {
         #第四列:黄色的:+line_num
         printf "\033[32m%-6s\033[0m \033[34m->\033[0m \033[33m%-7s +%s\033[0m\n" "$origin_relative_line_num" "do a jump" "$jump_line_num"
         echo -e "${matched_lines["$origin_relative_line_num"]}"
-        echo
+        if [[ "${counter}" -lt "${array_size}" ]]; then echo; fi
     done
 
     exit 0
