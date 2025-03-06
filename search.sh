@@ -37,7 +37,7 @@ search() {
         #real_line=$((plain_line_num + search_from_line_number - 1))
         trimmed_content=$(echo "$content" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
         matched_lines["$plain_line_num"]="$trimmed_content"
-    done < <(tail -n +"${search_from_line_number}" "${BOOK_FILE}" | rg --color=always --line-number "${pattern}")
+    done < <(tail -n +"${search_from_line_number}" "${BOOK_FILE}" | rg --color=always --line-number "${pattern}" | head -n 5)
 
     local array_size
     array_size="${#matched_lines[@]}"
