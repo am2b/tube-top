@@ -18,6 +18,9 @@ jump() {
     local error_message
     error_message="parameter error, please enter a line number, you can use a positive or negative sign to indicate how many lines to jump back or forward"
 
+    local record_for_jump_back
+    record_for_jump_back=/tmp/tube_top_jump
+
     if [[ "$number" =~ ^\+[0-9]+$ ]]; then
         #向后跳
         local number_without_sign
@@ -25,6 +28,7 @@ jump() {
         local cache_down_lines
         cache_down_lines=$((CACHE_TOTAL_LINES - CACHE_CUR_LINE + 1))
         if ((cache_down_lines >= number_without_sign)); then
+            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
             CACHE_CUR_LINE=$((CACHE_CUR_LINE + number_without_sign))
             _write_record_to_tupe_top
             return 0
@@ -38,6 +42,7 @@ jump() {
         local cache_up_lines
         cache_up_lines=$((CACHE_CUR_LINE - 1))
         if ((cache_up_lines >= number_without_sign)); then
+            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
             CACHE_CUR_LINE=$((CACHE_CUR_LINE - number_without_sign))
             _write_record_to_tupe_top
             return 0
@@ -48,12 +53,21 @@ jump() {
 
     if [[ "$number" =~ ^[0-9]+$ ]]; then
         #跳到实际的行号
-        if ((number > TOTAL_LINES)) || ((number <= 0)); then
+        if ((number <= TOTAL_LINES)) && ((number > 0)); then
+            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
+            CUR_LINE="${number}"
+        elif ((number == 0)); then
+            #jump back
+            if [[ ! -f "${record_for_jump_back}" ]]; then return 0; fi
+            local hold_cur_line
+            hold_cur_line="${CUR_LINE}"
+            CUR_LINE=$(cat "${record_for_jump_back}")
+            echo $((hold_cur_line - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
+        else
             echo "${error_message}"
             exit 1
         fi
         if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
-        CUR_LINE="${number}"
         CACHE_TOTAL_LINES=0
         CACHE_CUR_LINE=0
         FINISH=false

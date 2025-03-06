@@ -45,6 +45,7 @@ usage() {
     echo "${script} -j line_number:jump to line_number"
     echo "${script} -j +lines:jump backward lines"
     echo "${script} -j -lines:jump forward lines"
+    echo "${script} -j 0:jump back"
     #search pattern(search from the current line)
     echo "${script} -f pattern:search pattern(search from the current line)"
     #reset

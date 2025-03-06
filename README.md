@@ -53,6 +53,11 @@ Jump forward lines:
 tube_top.sh -j -lines
 ```
 
+Jump back:
+```bash
+tube_top.sh -j 0
+```
+
 Search pattern(search from the current line):
 ```bash
 tube_top.sh -f pattern
