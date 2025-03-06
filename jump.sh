@@ -63,3 +63,24 @@ jump() {
         exit 1
     fi
 }
+
+jump_to_last() {
+    BOOK_NAME=$(_get_the_reading_book_name)
+    BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
+
+    _read_record_from_tupe_top
+
+    local cache_up_lines
+    cache_up_lines=$((CACHE_CUR_LINE - 1))
+    if ((cache_up_lines >= show_lines_number)); then
+        CACHE_CUR_LINE=$((CACHE_CUR_LINE - show_lines_number))
+    else
+        CUR_LINE=$((CUR_LINE - CACHE_TOTAL_LINES + cache_up_lines - show_lines_number))
+        CACHE_TOTAL_LINES=0
+        CACHE_CUR_LINE=0
+        FINISH=false
+        if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
+    fi
+
+    _write_record_to_tupe_top
+}
