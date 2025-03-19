@@ -51,6 +51,12 @@ jump() {
         fi
     fi
 
+    #jump to the end
+    if [[ "${number}" == 'e' ]]; then
+        local module=$((TOTAL_LINES % show_lines_number))
+        number=$((TOTAL_LINES - module + 1))
+    fi
+
     if [[ "$number" =~ ^[0-9]+$ ]]; then
         #跳到实际的行号
         if ((number <= TOTAL_LINES)) && ((number > 0)); then
