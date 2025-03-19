@@ -11,7 +11,9 @@ list_all_books() {
     _read_record_from_tupe_top
     cur_real_line_num=$((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - 1))
     percent=$(echo "scale=10; $cur_real_line_num / $TOTAL_LINES * 100" | bc)
-    percent=$(echo "scale=2; $percent/1" | bc)
+    #这种方法会丢掉0.70前面的0
+    #percent=$(echo "scale=2; $percent/1" | bc)
+    percent=$(printf "%.2f" "$percent")
 
     local book_name_field_num
     local alias_field_num
