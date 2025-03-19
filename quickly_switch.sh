@@ -16,7 +16,7 @@ quickly_switch() {
         exit 0
     else
         echo "error:there is no previous book"
-        echo "usage: you can execute the following command to set the book you are reading:"
+        echo "usage: you can execute the following command to set the book you want to read:"
         echo "tube_top.sh -p book_name"
         exit 1
     fi

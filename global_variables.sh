@@ -40,7 +40,7 @@ if [[ -z "$GLOBAL_VARIABLES_LOADED" ]]; then
     msg_no_reading_book=$(
         cat <<EOF
 error: there are no books currently being read
-usage: you can execute the following command to set the book you are reading:
+usage: you can execute the following command to set the book you want to read:
 tube_top.sh -p book_name
 EOF
     )
