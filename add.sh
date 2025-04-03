@@ -12,11 +12,6 @@ add_book() {
         exit 1
     fi
 
-    #if ! file "${origin_file}" | grep -q "text"; then
-    #    echo "$origin_file is not a text file"
-    #    exit 1
-    #fi
-
     if [[ ! -r $origin_file ]]; then
         echo "$origin_file is unreadable"
         exit 1
@@ -37,6 +32,11 @@ add_book() {
 
     #register this book
     TOTAL_LINES=$(wc -l <"${BOOK_FILE}" | xargs)
+
+    #如果传递了"别名"作为第二个参数的话
+    if [[ -n "${2}" ]]; then
+        ALIAS="${2}"
+    fi
 
     _write_record_to_tupe_top
 

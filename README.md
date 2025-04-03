@@ -8,6 +8,11 @@ Add a book:
 tube_top.sh -a book_file
 ```
 
+Add a book and set alias:
+```bash
+tube_top.sh -a book_file alias_name
+```
+
 Pin a book:
 ```bash
 tube_top.sh -p book_name

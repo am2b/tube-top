@@ -29,6 +29,8 @@ usage() {
     echo "${script} -h:show usage"
     #add a book
     echo "${script} -a book_file:add a book"
+    #add a book and set alias
+    echo "${script} -a book_file alias_name:add a book and set alias"
     #pin a book
     echo "${script} -p book_name/alias:pin a book(note:pin for the first time,need book_name)"
     #set alias
@@ -68,7 +70,14 @@ parse_options() {
             usage
             ;;
         a)
-            add_book "$OPTARG"
+            #${!OPTIND}使用了间接引用(indirect reference)来获取OPTIND指向的变量的值
+            if [ -n "${!OPTIND}" ]; then
+                add_book "$OPTARG" "${!OPTIND}"
+                #更新OPTIND,让它指向下一个未被解析的命令行参数
+                OPTIND=$((OPTIND + 1))
+            else
+                add_book "$OPTARG"
+            fi
             ;;
         p)
             pin "$OPTARG"
@@ -112,5 +121,12 @@ parse_options() {
         esac
     done
 
+    #getopts每个选项默认只能携带一个参数
+
+    #OPTARG是当前选项的参数,也就是说,如果你执行-a foo,那么OPTARG就是foo
+    #OPTIND表示下一个未被解析的命令行位置参数的索引
+    #每次调用getopts后,OPTIND的值会自动更新,直到所有选项处理完毕‌
+
+    #移除已处理的选项参数,使$1指向剩余的第一个位置参数
     shift $((OPTIND - 1))
 }
