@@ -30,6 +30,7 @@ delete_old_files() {
 }
 
 backup() {
+    #注意:如果config文件里面的backup_dir写成了~/some_dir的形式的话,从config中读取的值是一个字符串,而字符串里面的~是不会自动解析的
     if [[ -z "${backup_dir}" ]]; then
         echo "error:read backup dir from config failed"
         exit 1
@@ -49,7 +50,7 @@ backup() {
     TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
     backup_name="tube_top_${TIMESTAMP}"
 
-    cp "${TUBE_TOP}" "${backup_dir}"/"${backup_name}"
+    cp "${TUBE_TOP}" "${backup_dir}/${backup_name}"
 
     #删除旧的备份文件
     delete_old_files "${backup_dir}" 25
