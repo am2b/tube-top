@@ -4,7 +4,28 @@ SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
+sort_lines_by_alias() {
+    local sorted_tube_top="${1}"
+    local none_records=/tmp/none_records
+    local sorted_records=/tmp/sorted_records
+
+    # 先分离出所有第二列为'none'的记录
+    awk -F, '$2 == "none" {print $0}' "$TUBE_TOP" >"${none_records}"
+
+    # 再将其他记录进行排序
+    awk -F, '$2 != "none" {print $0}' "$TUBE_TOP" | sort -t, -k2,2 >"${sorted_records}"
+
+    # 将排序后的记录与'none'记录合并,'none'记录放在后面
+    cat "${sorted_records}" "${none_records}" >"${sorted_tube_top}"
+
+    rm "${none_records}" "${sorted_records}"
+}
+
 list_all_books() {
+    #依据alias排序
+    local sorted_tube_top=/tmp/sorted_tube_top
+    sort_lines_by_alias "${sorted_tube_top}"
+
     local percent
     local cur_real_line_num
     BOOK_NAME=$(_get_the_reading_book_name)
@@ -63,7 +84,9 @@ list_all_books() {
         output = output color_arrow " <- " color_finish "finish" color_reset;
     }
     print output;
-}' "${TUBE_TOP}"
+}' "${sorted_tube_top}"
+
+    rm "${sorted_tube_top}"
 
     #仅查询,无需写入记录
     exit 0
