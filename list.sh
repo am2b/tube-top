@@ -51,7 +51,8 @@ list_all_books() {
     reading_field_num=$(_get_field_num "READING")
     finish_field_num=$(_get_field_num "FINISH")
 
-    local color_alias="\033[38;5;24m"
+    local color_alias="\033[38;5;58m"
+    local color_book_name="\033[38;5;24m"
     local color_arrow="\033[33m"
     local color_previous_reading="\033[38;5;22m"
     local color_reading="\033[32m"
@@ -63,6 +64,7 @@ list_all_books() {
         -v reading_field="$reading_field_num" -v finish_field="$finish_field_num" \
         -v percent="$percent" \
         -v color_alias="$color_alias" \
+        -v color_book_name="$color_book_name" \
         -v color_arrow="$color_arrow" \
         -v color_previous_reading="$color_previous_reading" \
         -v color_reading="$color_reading" \
@@ -71,7 +73,7 @@ list_all_books() {
         -v color_reset="$color_reset" \
         'BEGIN {OFS=","}
 {
-    output = "["color_alias $(alias_field) color_reset"] " $(book_name_field);
+    output = color_alias "["$(alias_field)"] " color_book_name $(book_name_field) color_reset;
     if ($reading_field == "true" && $finish_field == "true") {
         output = output color_arrow " <- " color_reading "reading" color_reset " - " color_finish "finish" color_reset;
     }else if ($reading_field == "previous" && $finish_field == "true") {
