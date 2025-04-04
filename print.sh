@@ -40,8 +40,13 @@ _do_print() {
         fi
         selected_color=${colors[$color_index]}
 
-        #行号颜色(默认绿色)
-        local line_number_color="\033[32m"
+        #行号颜色
+        local line_number_color="\033[90m"
+        #如果当前文本的颜色和行号的颜色相同时
+        if [[ "${line_number_color}" == "${selected_color}" ]]; then
+            #临时修改一下行号的颜色
+            line_number_color="\033[38;5;24m"
+        fi
 
         local reset_color="\033[0m"
 
@@ -59,10 +64,10 @@ _do_print() {
                 #是否打印行号
                 if (enable_line_number == 1) {
                     if (enable_color == 1) {
-                        printf "%s%d%s ", line_number_color, (origin_current_line - cache_total_lines - 1 + NR), reset_color
+                        printf "%s[%d]%s ", line_number_color, (origin_current_line - cache_total_lines - 1 + NR), reset_color
                     }
                     else {
-                        printf "%d ", (origin_current_line - cache_total_lines - 1 + NR)
+                        printf "[%d] ", (origin_current_line - cache_total_lines - 1 + NR)
                     }
                 }
 
