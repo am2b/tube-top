@@ -16,9 +16,14 @@ sort_lines_by_alias() {
     awk -F, '$2 != "none" {print $0}' "$TUBE_TOP" | sort -t, -k2,2 >"${sorted_records}"
 
     # 将排序后的记录与'none'记录合并,'none'记录放在后面
-    cat "${sorted_records}" "${none_records}" >"${sorted_tube_top}"
+    #-s:文件存在,并且非空
+    if [[ -s "${none_records}" ]]; then
+        cat "${sorted_records}" "${none_records}" >"${sorted_tube_top}"
+    else
+        mv "${sorted_records}" "${sorted_tube_top}"
+    fi
 
-    rm "${none_records}" "${sorted_records}"
+    rm -f "${none_records}" "${sorted_records}"
 }
 
 list_all_books() {
