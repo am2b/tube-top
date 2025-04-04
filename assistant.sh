@@ -70,6 +70,8 @@ parse_options() {
             usage
             ;;
         a)
+            backup
+
             #${!OPTIND}使用了间接引用(indirect reference)来获取OPTIND指向的变量的值
             if [ -n "${!OPTIND}" ]; then
                 add_book "$OPTARG" "${!OPTIND}"
@@ -104,12 +106,18 @@ parse_options() {
             search "$OPTARG"
             ;;
         r)
+            backup
+
             reset_book "$OPTARG"
             ;;
         d)
+            backup
+
             delete_book "$OPTARG"
             ;;
         l)
+            backup
+
             list_all_books
             ;;
         b)
