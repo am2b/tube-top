@@ -180,7 +180,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         awk -F, -v book_name="$BOOK_NAME" -v field_num="$field_num" -v new_value="$new_value" '
             BEGIN {OFS=","} 
             $1 == book_name { $(field_num) = new_value } {print}
-        ' "${TUBE_TOP}" >tmp && mv tmp "${TUBE_TOP}"
+        ' "${TUBE_TOP}" >/tmp/tube_top.txt && mv /tmp/tube_top.txt "${TUBE_TOP}"
     }
 
     #修改全部records的某一个字段
@@ -199,7 +199,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
                 $(field_num)=new_value
                 print
             }
-        ' "${TUBE_TOP}" >tmp && mv tmp "${TUBE_TOP}"
+        ' "${TUBE_TOP}" >/tmp/tube_top.txt && mv /tmp/tube_top.txt "${TUBE_TOP}"
     }
 
     _delete_book_from_tube_top() {
