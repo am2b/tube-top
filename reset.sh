@@ -16,9 +16,11 @@ reset_book() {
 
     READING=false
     CUR_LINE=1
-    CACHE_TOTAL_LINES=0
-    CACHE_CUR_LINE=0
-    FINISH=false
+    #CACHE_TOTAL_LINES=0
+    #CACHE_CUR_LINE=0
+    #FINISH=false
+
+    _cache
 
     _write_record_to_tupe_top
 }

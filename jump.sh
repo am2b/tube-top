@@ -26,6 +26,7 @@ jump() {
         local number_without_sign
         number_without_sign="${number#[-+]}"
         local cache_down_lines
+        #如果BOOK_CACHE_FILE不存在的话,这里计算的结果为1
         cache_down_lines=$((CACHE_TOTAL_LINES - CACHE_CUR_LINE + 1))
         if ((cache_down_lines >= number_without_sign)); then
             echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
@@ -40,6 +41,7 @@ jump() {
         local number_without_sign
         number_without_sign="${number#[-+]}"
         local cache_up_lines
+        #如果BOOK_CACHE_FILE不存在的话,这里计算的结果为-1
         cache_up_lines=$((CACHE_CUR_LINE - 1))
         if ((cache_up_lines >= number_without_sign)); then
             echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
@@ -60,6 +62,7 @@ jump() {
     if [[ "$number" =~ ^[0-9]+$ ]]; then
         #跳到实际的行号
         if ((number <= TOTAL_LINES)) && ((number > 0)); then
+            #如果BOOK_CACHE_FILE不存在的话,这里写入的结果为-1
             echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
             CUR_LINE="${number}"
         elif ((number == 0)); then
@@ -68,15 +71,18 @@ jump() {
             local hold_cur_line
             hold_cur_line="${CUR_LINE}"
             CUR_LINE=$(cat "${record_for_jump_back}")
+            #!!!如果BOOK_CACHE_FILE不存在的话,这里写入的结果要实际测试一下
             echo $((hold_cur_line - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
         else
             echo "${error_message}"
             exit 1
         fi
         if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
-        CACHE_TOTAL_LINES=0
-        CACHE_CUR_LINE=0
-        FINISH=false
+        #CACHE_TOTAL_LINES=0
+        #CACHE_CUR_LINE=0
+        #FINISH=false
+        _cache
+
         _write_record_to_tupe_top
     else
         echo "${error_message}"
@@ -96,10 +102,11 @@ jump_to_last() {
         CACHE_CUR_LINE=$((CACHE_CUR_LINE - show_lines_number))
     else
         CUR_LINE=$((CUR_LINE - CACHE_TOTAL_LINES + cache_up_lines - show_lines_number))
-        CACHE_TOTAL_LINES=0
-        CACHE_CUR_LINE=0
-        FINISH=false
+        #CACHE_TOTAL_LINES=0
+        #CACHE_CUR_LINE=0
+        #FINISH=false
         if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
+        _cache
     fi
 
     _write_record_to_tupe_top

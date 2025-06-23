@@ -38,6 +38,9 @@ add_book() {
         ALIAS="${2}"
     fi
 
+    #do cache
+    _cache
+
     _write_record_to_tupe_top
 
     exit 0

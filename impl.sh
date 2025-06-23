@@ -207,17 +207,24 @@ if [[ -z "$IMPL_LOADED" ]]; then
     }
 
     _cache() {
+        BOOK_NAME=$(_get_the_reading_book_name)
+        if [[ -z $BOOK_NAME ]]; then
+            echo "${msg_no_reading_book} when caching"
+            exit 1
+        fi
+
+        BOOK_FILE="${BOOKS_DIR}"/"${BOOK_NAME}"
+        if [[ ! -f "${BOOK_FILE}" ]]; then
+            echo "error:the book file:${BOOK_FILE} was not found in ${BOOKS_DIR} when caching"
+            exit 1
+        fi
+
         local cache_lines_count
         #check if cur_line+cache_lines_number exceeds the total lines
         if ((CUR_LINE + cache_lines_number - 1 > TOTAL_LINES)); then
             cache_lines_count=$((TOTAL_LINES - CUR_LINE + 1))
         else
             cache_lines_count="${cache_lines_number}"
-        fi
-
-        if [[ ! -f "${BOOK_FILE}" ]]; then
-            echo "error:the book file:${BOOK_FILE} was not found in ${BOOKS_DIR} when caching"
-            exit 1
         fi
 
         awk "NR>=${CUR_LINE} && NR<${CUR_LINE}+${cache_lines_count}" "${BOOK_FILE}" >"${BOOK_CACHE_FILE}"
