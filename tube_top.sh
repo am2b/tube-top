@@ -12,6 +12,7 @@ source "${SELF_ABS_DIR}"/print.sh
 source "${SELF_ABS_DIR}"/page_up.sh
 source "${SELF_ABS_DIR}"/jump.sh
 source "${SELF_ABS_DIR}"/search.sh
+source "${SELF_ABS_DIR}"/ocd.sh
 source "${SELF_ABS_DIR}"/delete.sh
 source "${SELF_ABS_DIR}"/reset.sh
 source "${SELF_ABS_DIR}"/list.sh

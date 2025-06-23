@@ -68,6 +68,11 @@ Search pattern(search from the current line):
 tube_top.sh -f pattern
 ```
 
+Obsessive-Compulsive Disorder
+```bash
+tube_top.sh -o
+```
+
 Reset a book:
 ```bash
 tube_top.sh -r book_name
