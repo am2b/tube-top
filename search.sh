@@ -51,12 +51,13 @@ search() {
         #减1:是因为做了jump +num后,然后print的时候是从下一行开始print的
         jump_line_num=$((origin_relative_line_num - 1))
         #强迫症:按照show_lines_number的整数倍去跳转
-        jump_line_num=$((jump_line_num / show_lines_number * show_lines_number))
+        #jump_line_num=$((jump_line_num / show_lines_number * show_lines_number))
         #第一列:绿色的:line_num(%-6s:左对齐,宽度为6)
         #第二列:蓝色的:->
         #第三列:黄色的:do jump(%-7s:左对齐,宽度为7)
         #第四列:黄色的:+line_num
-        printf "\033[32m%-6s\033[0m \033[34m->\033[0m \033[33m%-7s +%s\033[0m\n" "$origin_relative_line_num" "do a jump" "$jump_line_num"
+        #printf "\033[32m%-6s\033[0m \033[34m->\033[0m \033[33m%-7s +%s\033[0m\n" "$origin_relative_line_num" "do a jump" "$jump_line_num"
+        printf "\033[32m+%-6s\033[0m" "$jump_line_num"
         echo -e "${matched_lines["$origin_relative_line_num"]}"
         if [[ "${counter}" -lt "${array_size}" ]]; then echo; fi
     done
