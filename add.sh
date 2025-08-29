@@ -39,7 +39,7 @@ add_book() {
     fi
 
     #do cache
-    _cache
+    _cache "${BOOK_NAME}"
 
     _write_record_to_tupe_top
 

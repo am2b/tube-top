@@ -208,6 +208,12 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     _cache() {
         BOOK_NAME=$(_get_the_reading_book_name)
+
+        #for add
+        if [[ -n "${1}" ]]; then
+            BOOK_NAME="${1}"
+        fi
+
         if [[ -z $BOOK_NAME ]]; then
             echo "${msg_no_reading_book} when caching"
             exit 1
@@ -225,6 +231,11 @@ if [[ -z "$IMPL_LOADED" ]]; then
             cache_lines_count=$((TOTAL_LINES - CUR_LINE + 1))
         else
             cache_lines_count="${cache_lines_number}"
+        fi
+
+        #for add
+        if [[ -z "${BOOK_CACHE_FILE}" ]]; then
+            BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
         fi
 
         awk "NR>=${CUR_LINE} && NR<${CUR_LINE}+${cache_lines_count}" "${BOOK_FILE}" >"${BOOK_CACHE_FILE}"
