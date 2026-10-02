@@ -37,9 +37,9 @@ list_all_books() {
 
     if [[ -n "${BOOK_NAME}" ]]; then
         _read_record_from_tupe_top
-        cur_real_line_num=$((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - 1))
+        cur_real_line_num=$((ORIGINAL_NEXT_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - 1))
         #如果一行都没有读的话
-        if [[ "${CUR_LINE}" -eq 1 ]]; then cur_real_line_num=0; fi
+        if [[ "${ORIGINAL_NEXT_LINE}" -eq 1 ]]; then cur_real_line_num=0; fi
         percent=$(echo "scale=10; $cur_real_line_num / $ORIGINAL_TOTAL_LINES * 100" | bc)
         #这种方法会丢掉0.70前面的0
         #percent=$(echo "scale=2; $percent/1" | bc)

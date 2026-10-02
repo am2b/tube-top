@@ -29,12 +29,12 @@ jump() {
         #如果BOOK_CACHE_FILE不存在的话,这里计算的结果为1
         cache_down_lines=$((CACHE_TOTAL_LINES - CACHE_CUR_LINE + 1))
         if ((cache_down_lines >= number_without_sign)); then
-            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
+            echo $((ORIGINAL_NEXT_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
             CACHE_CUR_LINE=$((CACHE_CUR_LINE + number_without_sign))
             _write_record_to_tupe_top
             return 0
         else
-            number=$((CUR_LINE + number_without_sign - cache_down_lines))
+            number=$((ORIGINAL_NEXT_LINE + number_without_sign - cache_down_lines))
         fi
     elif [[ "$number" =~ ^-[0-9]+$ ]]; then
         #向前跳
@@ -44,12 +44,12 @@ jump() {
         #如果BOOK_CACHE_FILE不存在的话,这里计算的结果为-1
         cache_up_lines=$((CACHE_CUR_LINE - 1))
         if ((cache_up_lines >= number_without_sign)); then
-            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
+            echo $((ORIGINAL_NEXT_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
             CACHE_CUR_LINE=$((CACHE_CUR_LINE - number_without_sign))
             _write_record_to_tupe_top
             return 0
         else
-            number=$((CUR_LINE - CACHE_TOTAL_LINES + cache_up_lines - number_without_sign))
+            number=$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES + cache_up_lines - number_without_sign))
         fi
     fi
 
@@ -63,14 +63,14 @@ jump() {
         #跳到实际的行号
         if ((number <= ORIGINAL_TOTAL_LINES)) && ((number > 0)); then
             #如果BOOK_CACHE_FILE不存在的话,这里写入的结果为-1
-            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
-            CUR_LINE="${number}"
+            echo $((ORIGINAL_NEXT_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
+            ORIGINAL_NEXT_LINE="${number}"
         elif ((number == 0)); then
             #jump back
             if [[ ! -f "${record_for_jump_back}" ]]; then return 0; fi
             local hold_cur_line
-            hold_cur_line="${CUR_LINE}"
-            CUR_LINE=$(cat "${record_for_jump_back}")
+            hold_cur_line="${ORIGINAL_NEXT_LINE}"
+            ORIGINAL_NEXT_LINE=$(cat "${record_for_jump_back}")
             #!!!如果BOOK_CACHE_FILE不存在的话,这里写入的结果要实际测试一下
             echo $((hold_cur_line - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
         else
@@ -101,7 +101,7 @@ jump_to_last() {
     if ((cache_up_lines >= show_lines_number)); then
         CACHE_CUR_LINE=$((CACHE_CUR_LINE - show_lines_number))
     else
-        CUR_LINE=$((CUR_LINE - CACHE_TOTAL_LINES + cache_up_lines - show_lines_number))
+        ORIGINAL_NEXT_LINE=$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES + cache_up_lines - show_lines_number))
         #CACHE_TOTAL_LINES=0
         #CACHE_CUR_LINE=0
         #FINISH=false

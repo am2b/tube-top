@@ -26,10 +26,10 @@ search() {
 
     #已读行的下一行
     local search_from_line_number
-    search_from_line_number=$((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE))
+    search_from_line_number=$((ORIGINAL_NEXT_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE))
     #jump存在删除BOOK_CACHE_FILE的可能
     #if [[ ! -f "${CACHE_DIR}"/"${BOOK_NAME}" ]]; then
-    #    search_from_line_number="${CUR_LINE}"
+    #    search_from_line_number="${ORIGINAL_NEXT_LINE}"
     #fi
 
     declare -A matched_lines

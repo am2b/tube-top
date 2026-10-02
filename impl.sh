@@ -37,7 +37,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
             "ORIGINAL_TOTAL_LINES")
                 echo 4
                 ;;
-            "CUR_LINE")
+            "ORIGINAL_NEXT_LINE")
                 echo 5
                 ;;
             "CACHE_TOTAL_LINES")
@@ -229,8 +229,8 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
         local cache_lines_count
         #check if cur_line+cache_lines_number exceeds the total lines
-        if ((CUR_LINE + cache_lines_number - 1 > ORIGINAL_TOTAL_LINES)); then
-            cache_lines_count=$((ORIGINAL_TOTAL_LINES - CUR_LINE + 1))
+        if ((ORIGINAL_NEXT_LINE + cache_lines_number - 1 > ORIGINAL_TOTAL_LINES)); then
+            cache_lines_count=$((ORIGINAL_TOTAL_LINES - ORIGINAL_NEXT_LINE + 1))
         else
             cache_lines_count="${cache_lines_number}"
         fi
@@ -240,14 +240,14 @@ if [[ -z "$IMPL_LOADED" ]]; then
             BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
         fi
 
-        awk "NR>=${CUR_LINE} && NR<${CUR_LINE}+${cache_lines_count}" "${BOOK_FILE}" > "${BOOK_CACHE_FILE}"
+        awk "NR>=${ORIGINAL_NEXT_LINE} && NR<${ORIGINAL_NEXT_LINE}+${cache_lines_count}" "${BOOK_FILE}" > "${BOOK_CACHE_FILE}"
 
         #update total cache lines and current cache line
         CACHE_TOTAL_LINES=$(wc -l < "${BOOK_CACHE_FILE}" | xargs)
         CACHE_CUR_LINE=1
 
         #update current line in the entire book
-        CUR_LINE=$((CUR_LINE + cache_lines_count))
+        ORIGINAL_NEXT_LINE=$((ORIGINAL_NEXT_LINE + cache_lines_count))
     }
 
     _tube_top_init() {
@@ -304,7 +304,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
             ALIAS="${parts[1]}"
             READING="${parts[2]}"
             ORIGINAL_TOTAL_LINES="${parts[3]}"
-            CUR_LINE="${parts[4]}"
+            ORIGINAL_NEXT_LINE="${parts[4]}"
             CACHE_TOTAL_LINES="${parts[5]}"
             CACHE_CUR_LINE="${parts[6]}"
             FINISH="${parts[7]}"
@@ -314,6 +314,6 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     _write_record_to_tupe_top() {
         _delete_book_from_tube_top
-        echo "${BOOK_NAME}","${ALIAS}","${READING}","${ORIGINAL_TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}","${EVER_FINISHED}" >> "${TUBE_TOP}"
+        echo "${BOOK_NAME}","${ALIAS}","${READING}","${ORIGINAL_TOTAL_LINES}","${ORIGINAL_NEXT_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}","${EVER_FINISHED}" >> "${TUBE_TOP}"
     }
 fi

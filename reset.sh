@@ -15,7 +15,7 @@ reset_book() {
     _read_record_from_tupe_top
 
     READING=false
-    CUR_LINE=1
+    ORIGINAL_NEXT_LINE=1
     CACHE_TOTAL_LINES=0
     CACHE_CUR_LINE=0
     FINISH=false
