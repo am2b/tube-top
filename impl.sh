@@ -250,6 +250,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         ORIGINAL_NEXT_LINE=$((ORIGINAL_NEXT_LINE + cache_lines_count))
     }
 
+    #make sure配置文件,颜色文件,数据库文件
     _tube_top_init() {
         if [[ ! -d "${CONFIG_DIR}" ]]; then
             mkdir -p "${CONFIG_DIR}"
@@ -288,8 +289,8 @@ if [[ -z "$IMPL_LOADED" ]]; then
         if [[ ! -f "${TUBE_TOP}" ]]; then touch "${TUBE_TOP}"; fi
     }
 
+    #从配置文件中读取值
     _read_config() {
-        #从config中读取值
         cache_lines_number=$(_get_config_value "cache_lines_number")
         show_lines_number=$(_get_config_value "show_lines_number")
         enable_line_number=$(_get_config_value "enable_line_number")

@@ -19,12 +19,16 @@ source "${SELF_ABS_DIR}"/list.sh
 source "${SELF_ABS_DIR}"/backup.sh
 
 main() {
+    #检查工具
     required_tools
 
+    #make sure配置文件,颜色文件,数据库文件
     _tube_top_init
 
+    #从配置文件中读取值
     _read_config
 
+    #解析选项
     parse_options "${@}"
 }
 

@@ -6,16 +6,16 @@ required_tools() {
     local tools=("sed" "awk")
     for tool in "${tools[@]}"; do
         if ! command -v "$tool" > /dev/null 2>&1; then
-            echo "$tool 未安装,请安装 GNU Coreutils"
+            echo "$tool 未安装,请安装GNU Coreutils"
             exit 1
         fi
         if ! "$tool" --version 2> /dev/null | grep -q "GNU"; then
-            echo "$tool 不是 GNU Coreutils 版本,请安装正确版本"
+            echo "$tool 不是GNU Coreutils版本,请安装正确版本"
             exit 1
         fi
     done
 
-    tools=("trash")
+    tools=("trash" "bc")
     for tool in "${tools[@]}"; do
         if ! command -v "$tool" > /dev/null 2>&1; then
             echo "$tool 未安装"
@@ -121,8 +121,6 @@ parse_options() {
                 delete_book "$OPTARG"
                 ;;
             l)
-                backup
-
                 list_all_books
                 ;;
             b)
