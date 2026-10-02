@@ -43,7 +43,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
             "CACHE_TOTAL_LINES")
                 echo 6
                 ;;
-            "CACHE_CUR_LINE")
+            "CACHE_NEXT_LINE")
                 echo 7
                 ;;
             "FINISH")
@@ -244,7 +244,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
         #update total cache lines and current cache line
         CACHE_TOTAL_LINES=$(wc -l < "${BOOK_CACHE_FILE}" | xargs)
-        CACHE_CUR_LINE=1
+        CACHE_NEXT_LINE=1
 
         #update current line in the entire book
         ORIGINAL_NEXT_LINE=$((ORIGINAL_NEXT_LINE + cache_lines_count))
@@ -306,7 +306,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
             ORIGINAL_TOTAL_LINES="${parts[3]}"
             ORIGINAL_NEXT_LINE="${parts[4]}"
             CACHE_TOTAL_LINES="${parts[5]}"
-            CACHE_CUR_LINE="${parts[6]}"
+            CACHE_NEXT_LINE="${parts[6]}"
             FINISH="${parts[7]}"
             EVER_FINISHED="${parts[8]}"
         fi
@@ -314,6 +314,6 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     _write_record_to_tupe_top() {
         _delete_book_from_tube_top
-        echo "${BOOK_NAME}","${ALIAS}","${READING}","${ORIGINAL_TOTAL_LINES}","${ORIGINAL_NEXT_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}","${EVER_FINISHED}" >> "${TUBE_TOP}"
+        echo "${BOOK_NAME}","${ALIAS}","${READING}","${ORIGINAL_TOTAL_LINES}","${ORIGINAL_NEXT_LINE}","${CACHE_TOTAL_LINES}","${CACHE_NEXT_LINE}","${FINISH}","${EVER_FINISHED}" >> "${TUBE_TOP}"
     }
 fi

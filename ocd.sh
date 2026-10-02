@@ -15,7 +15,7 @@ ocd() {
     _read_record_from_tupe_top
 
     local next_line
-    next_line=$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES + CACHE_CUR_LINE - 1))
+    next_line=$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES + CACHE_NEXT_LINE - 1))
     #整数除法自动向下取整
     local batch_num=$(((next_line - 1) / 10))
     #第n批次所对应的行号:n * 10 + 1 ~ (n + 1) * 10

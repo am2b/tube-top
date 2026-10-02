@@ -44,7 +44,7 @@ if [[ -z "$GLOBAL_VARIABLES_LOADED" ]]; then
     #第6列:缓存文件的总行数
     CACHE_TOTAL_LINES=0
     #第7列:在缓存文件中,下次从哪一行开始读
-    CACHE_CUR_LINE=0
+    CACHE_NEXT_LINE=0
     #第8列:是否已经读完了(没有可打印的了)
     FINISH=false
     #第9列:这本书是否曾经读完过

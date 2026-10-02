@@ -6,7 +6,7 @@ source "${SELF_ABS_DIR}"/impl.sh
 
 _do_print() {
     local cache_left_lines
-    cache_left_lines=$((CACHE_TOTAL_LINES - CACHE_CUR_LINE + 1))
+    cache_left_lines=$((CACHE_TOTAL_LINES - CACHE_NEXT_LINE + 1))
 
     local show_lines_real_number
     if [[ "${cache_left_lines}" -lt "${show_lines_number}" ]]; then
@@ -17,11 +17,11 @@ _do_print() {
 
     if [[ "${show_lines_real_number}" -ne 0 ]]; then
         #without line number
-        #tail -n +"${CACHE_CUR_LINE}" "${BOOK_CACHE_FILE}" | head -n "${show_lines_real_number}"
+        #tail -n +"${CACHE_NEXT_LINE}" "${BOOK_CACHE_FILE}" | head -n "${show_lines_real_number}"
         #with line number
-        #nl -v$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES)) "${BOOK_CACHE_FILE}" | tail -n +"${CACHE_CUR_LINE}" | head -n "${show_lines_real_number}"
+        #nl -v$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES)) "${BOOK_CACHE_FILE}" | tail -n +"${CACHE_NEXT_LINE}" | head -n "${show_lines_real_number}"
         #with line number
-        #awk -v start="$CACHE_CUR_LINE" -v number="$show_lines_real_number" -v origin_current_line="$ORIGINAL_NEXT_LINE" -v cache_total_lines="$CACHE_TOTAL_LINES" 'NR>=start && NR<(start + number) {print (origin_current_line - cache_total_lines - 1 + NR), $0}' "${BOOK_CACHE_FILE}"
+        #awk -v start="$CACHE_NEXT_LINE" -v number="$show_lines_real_number" -v origin_current_line="$ORIGINAL_NEXT_LINE" -v cache_total_lines="$CACHE_TOTAL_LINES" 'NR>=start && NR<(start + number) {print (origin_current_line - cache_total_lines - 1 + NR), $0}' "${BOOK_CACHE_FILE}"
         #with color
         mapfile -t colors < "${COLORS_FILE}"
         local colors_size="${#colors[@]}"
@@ -50,7 +50,7 @@ _do_print() {
 
         local reset_color="\033[0m"
 
-        awk -v start="$CACHE_CUR_LINE" \
+        awk -v start="$CACHE_NEXT_LINE" \
             -v number="$show_lines_real_number" \
             -v origin_current_line="$ORIGINAL_NEXT_LINE" \
             -v cache_total_lines="$CACHE_TOTAL_LINES" \
@@ -81,7 +81,7 @@ _do_print() {
             }' "${BOOK_CACHE_FILE}"
 
         #update current cache line
-        CACHE_CUR_LINE=$((CACHE_CUR_LINE + show_lines_real_number))
+        CACHE_NEXT_LINE=$((CACHE_NEXT_LINE + show_lines_real_number))
     fi
 }
 
@@ -121,13 +121,13 @@ print() {
         _cache
     else
         #cache的行数是show_lines_number的整数倍
-        if ((CACHE_CUR_LINE > CACHE_TOTAL_LINES)); then
+        if ((CACHE_NEXT_LINE > CACHE_TOTAL_LINES)); then
             #echo "cache 2"
             _cache
         else
             #需要回退(剩下的行数小于show_lines_number)
             local cache_left_lines
-            cache_left_lines=$((CACHE_TOTAL_LINES - CACHE_CUR_LINE + 1))
+            cache_left_lines=$((CACHE_TOTAL_LINES - CACHE_NEXT_LINE + 1))
             if ((cache_left_lines < show_lines_number)); then
                 #原始文件里是否还有剩余的行数来支持回退
                 local origin_left_lines
@@ -144,7 +144,7 @@ print() {
     _do_print
 
     #update the finish flag
-    if [[ "${ORIGINAL_NEXT_LINE}" -gt "${ORIGINAL_TOTAL_LINES}" && "${CACHE_CUR_LINE}" -gt "${CACHE_TOTAL_LINES}" ]]; then
+    if [[ "${ORIGINAL_NEXT_LINE}" -gt "${ORIGINAL_TOTAL_LINES}" && "${CACHE_NEXT_LINE}" -gt "${CACHE_TOTAL_LINES}" ]]; then
         FINISH=true
         EVER_FINISHED=true
         echo "You have finished the book:${BOOK_NAME}"
