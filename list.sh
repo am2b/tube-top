@@ -49,46 +49,46 @@ list_all_books() {
     local book_name_field_num
     local alias_field_num
     local reading_field_num
-    local finish_field_num
+    local ever_finished_field_num
 
     book_name_field_num=$(_get_field_num "BOOK_NAME")
     alias_field_num=$(_get_field_num "ALIAS")
     reading_field_num=$(_get_field_num "READING")
-    finish_field_num=$(_get_field_num "FINISH")
+    ever_finished_field_num=$(_get_field_num "EVER_FINISHED")
 
     local color_alias="\033[38;5;58m"
     local color_book_name="\033[38;5;24m"
     local color_arrow="\033[33m"
     local color_previous_reading="\033[38;5;22m"
     local color_reading="\033[32m"
-    local color_finish="\033[90m"
+    local color_ever_finished="\033[90m"
     local color_percent="\033[34m"
     local color_reset="\033[0m"
 
     awk -F, -v book_name_field="$book_name_field_num" -v alias_field="$alias_field_num" \
-        -v reading_field="$reading_field_num" -v finish_field="$finish_field_num" \
+        -v reading_field="$reading_field_num" -v ever_finished_field="$ever_finished_field_num" \
         -v percent="$percent" \
         -v color_alias="$color_alias" \
         -v color_book_name="$color_book_name" \
         -v color_arrow="$color_arrow" \
         -v color_previous_reading="$color_previous_reading" \
         -v color_reading="$color_reading" \
-        -v color_finish="$color_finish" \
+        -v color_ever_finished="$color_ever_finished" \
         -v color_percent="$color_percent" \
         -v color_reset="$color_reset" \
         'BEGIN {OFS=","}
 {
     output = color_alias "["$(alias_field)"] " color_book_name $(book_name_field) color_reset;
-    if ($reading_field == "true" && $finish_field == "true") {
-        output = output color_arrow " <- " color_reading "reading" color_reset " - " color_finish "finish" color_reset;
-    }else if ($reading_field == "previous" && $finish_field == "true") {
-        output = output color_arrow " <- " color_previous_reading "previous reading" color_reset " - " color_finish "finish" color_reset;
+    if ($reading_field == "true" && $ever_finished_field == "true") {
+        output = output color_arrow " <- " color_reading "reading" color_reset " - " color_ever_finished "finish" color_reset;
+    }else if ($reading_field == "previous" && $ever_finished_field == "true") {
+        output = output color_arrow " <- " color_previous_reading "previous reading" color_reset " - " color_ever_finished "finish" color_reset;
     } else if ($reading_field == "true") {
         output = output color_arrow " <- " color_reading "reading" color_reset "[" color_percent percent "%" color_reset "]";
     } else if ($reading_field == "previous") {
         output = output color_arrow " <- " color_previous_reading "previous reading" color_reset;
-    } else if ($finish_field == "true") {
-        output = output color_arrow " <- " color_finish "finish" color_reset;
+    } else if ($ever_finished_field == "true") {
+        output = output color_arrow " <- " color_ever_finished "finish" color_reset;
     }
     print output;
 }' "${sorted_tube_top}"

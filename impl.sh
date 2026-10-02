@@ -49,6 +49,9 @@ if [[ -z "$IMPL_LOADED" ]]; then
             "FINISH")
                 echo 8
                 ;;
+            "EVER_FINISHED")
+                echo 9
+                ;;
             *)
                 exit 1
                 ;;
@@ -209,7 +212,6 @@ if [[ -z "$IMPL_LOADED" ]]; then
     _cache() {
         BOOK_NAME=$(_get_the_reading_book_name)
 
-        #for add
         if [[ -n "${1}" ]]; then
             BOOK_NAME="${1}"
         fi
@@ -306,11 +308,12 @@ if [[ -z "$IMPL_LOADED" ]]; then
             CACHE_TOTAL_LINES="${parts[5]}"
             CACHE_CUR_LINE="${parts[6]}"
             FINISH="${parts[7]}"
+            EVER_FINISHED="${parts[8]}"
         fi
     }
 
     _write_record_to_tupe_top() {
         _delete_book_from_tube_top
-        echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >> "${TUBE_TOP}"
+        echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}","${EVER_FINISHED}" >> "${TUBE_TOP}"
     }
 fi

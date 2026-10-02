@@ -146,6 +146,7 @@ print() {
     #update the finish flag
     if [[ "${CUR_LINE}" -gt "${TOTAL_LINES}" && "${CACHE_CUR_LINE}" -gt "${CACHE_TOTAL_LINES}" ]]; then
         FINISH=true
+        EVER_FINISHED=true
         echo "You have finished the book:${BOOK_NAME}"
     fi
 
