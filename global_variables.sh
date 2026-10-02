@@ -38,7 +38,7 @@ if [[ -z "$GLOBAL_VARIABLES_LOADED" ]]; then
     #第3列
     READING=false
     #第4列:原始文件的总行数
-    TOTAL_LINES=0
+    ORIGINAL_TOTAL_LINES=0
     #第5列:在原始文件中,下次从哪一行开始读
     CUR_LINE=1
     #第6列:缓存文件的总行数

@@ -55,13 +55,13 @@ jump() {
 
     #jump to the end
     if [[ "${number}" == 'e' ]]; then
-        local module=$((TOTAL_LINES % show_lines_number))
-        number=$((TOTAL_LINES - module + 1))
+        local module=$((ORIGINAL_TOTAL_LINES % show_lines_number))
+        number=$((ORIGINAL_TOTAL_LINES - module + 1))
     fi
 
     if [[ "$number" =~ ^[0-9]+$ ]]; then
         #跳到实际的行号
-        if ((number <= TOTAL_LINES)) && ((number > 0)); then
+        if ((number <= ORIGINAL_TOTAL_LINES)) && ((number > 0)); then
             #如果BOOK_CACHE_FILE不存在的话,这里写入的结果为-1
             echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
             CUR_LINE="${number}"

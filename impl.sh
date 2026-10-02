@@ -34,7 +34,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
             "READING")
                 echo 3
                 ;;
-            "TOTAL_LINES")
+            "ORIGINAL_TOTAL_LINES")
                 echo 4
                 ;;
             "CUR_LINE")
@@ -229,8 +229,8 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
         local cache_lines_count
         #check if cur_line+cache_lines_number exceeds the total lines
-        if ((CUR_LINE + cache_lines_number - 1 > TOTAL_LINES)); then
-            cache_lines_count=$((TOTAL_LINES - CUR_LINE + 1))
+        if ((CUR_LINE + cache_lines_number - 1 > ORIGINAL_TOTAL_LINES)); then
+            cache_lines_count=$((ORIGINAL_TOTAL_LINES - CUR_LINE + 1))
         else
             cache_lines_count="${cache_lines_number}"
         fi
@@ -303,7 +303,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
             IFS=',' read -r -a parts <<< "${record}"
             ALIAS="${parts[1]}"
             READING="${parts[2]}"
-            TOTAL_LINES="${parts[3]}"
+            ORIGINAL_TOTAL_LINES="${parts[3]}"
             CUR_LINE="${parts[4]}"
             CACHE_TOTAL_LINES="${parts[5]}"
             CACHE_CUR_LINE="${parts[6]}"
@@ -314,6 +314,6 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     _write_record_to_tupe_top() {
         _delete_book_from_tube_top
-        echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}","${EVER_FINISHED}" >> "${TUBE_TOP}"
+        echo "${BOOK_NAME}","${ALIAS}","${READING}","${ORIGINAL_TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}","${EVER_FINISHED}" >> "${TUBE_TOP}"
     }
 fi

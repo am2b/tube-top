@@ -131,7 +131,7 @@ print() {
             if ((cache_left_lines < show_lines_number)); then
                 #原始文件里是否还有剩余的行数来支持回退
                 local origin_left_lines
-                origin_left_lines=$((TOTAL_LINES - CUR_LINE + 1))
+                origin_left_lines=$((ORIGINAL_TOTAL_LINES - CUR_LINE + 1))
                 if ((origin_left_lines > 0)); then
                     CUR_LINE=$((CUR_LINE - cache_left_lines))
                     #echo "cache 3"
@@ -144,7 +144,7 @@ print() {
     _do_print
 
     #update the finish flag
-    if [[ "${CUR_LINE}" -gt "${TOTAL_LINES}" && "${CACHE_CUR_LINE}" -gt "${CACHE_TOTAL_LINES}" ]]; then
+    if [[ "${CUR_LINE}" -gt "${ORIGINAL_TOTAL_LINES}" && "${CACHE_CUR_LINE}" -gt "${CACHE_TOTAL_LINES}" ]]; then
         FINISH=true
         EVER_FINISHED=true
         echo "You have finished the book:${BOOK_NAME}"
