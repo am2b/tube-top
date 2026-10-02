@@ -19,9 +19,10 @@ add_book() {
 
     #BOOK_NAME中包含后缀名(basename的结果包含后缀名)
     BOOK_NAME=$(basename "${origin_file}")
+    #数据库中的原始文件
     BOOK_FILE="${BOOKS_DIR}"/"${BOOK_NAME}"
 
-    #check if the library already has this book
+    #检查数据库中是否已经有了要添加的书
     if [[ -f "${BOOK_FILE}" ]] || _query_book_in_tube_top; then
         echo "error:the library already contains a book with the same name:${BOOK_NAME}"
         exit 1
@@ -39,7 +40,7 @@ add_book() {
     fi
 
     #do cache
-    _cache "${BOOK_NAME}"
+    #_cache "${BOOK_NAME}"
 
     _write_record_to_tupe_top
 

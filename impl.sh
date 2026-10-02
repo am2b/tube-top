@@ -60,6 +60,11 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #根据全局变量BOOK_NAME来查询其record
     _query_book_in_tube_top() {
+        if [[ -z $BOOK_NAME ]]; then
+            echo "error:BOOK_NAME is empty in function:_query_book_in_tube_top"
+            exit 1
+        fi
+
         local record
         record=$(sed -n "/^$BOOK_NAME,/p" "${TUBE_TOP}")
         if [[ -n $record ]]; then
