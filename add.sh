@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+#add:
+#复制原文件到数据库
+#获取到BOOK_NAME
+#获取到ORIGINAL_TOTAL_LINE
+#如果有第二个参数的话,就可以获取到ALIAS
+#写入数据库
+
 SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
