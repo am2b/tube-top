@@ -29,7 +29,7 @@ jump() {
         #如果BOOK_CACHE_FILE不存在的话,这里计算的结果为1
         cache_down_lines=$((CACHE_TOTAL_LINES - CACHE_CUR_LINE + 1))
         if ((cache_down_lines >= number_without_sign)); then
-            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
+            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
             CACHE_CUR_LINE=$((CACHE_CUR_LINE + number_without_sign))
             _write_record_to_tupe_top
             return 0
@@ -44,7 +44,7 @@ jump() {
         #如果BOOK_CACHE_FILE不存在的话,这里计算的结果为-1
         cache_up_lines=$((CACHE_CUR_LINE - 1))
         if ((cache_up_lines >= number_without_sign)); then
-            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
+            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
             CACHE_CUR_LINE=$((CACHE_CUR_LINE - number_without_sign))
             _write_record_to_tupe_top
             return 0
@@ -63,7 +63,7 @@ jump() {
         #跳到实际的行号
         if ((number <= TOTAL_LINES)) && ((number > 0)); then
             #如果BOOK_CACHE_FILE不存在的话,这里写入的结果为-1
-            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
+            echo $((CUR_LINE - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
             CUR_LINE="${number}"
         elif ((number == 0)); then
             #jump back
@@ -72,7 +72,7 @@ jump() {
             hold_cur_line="${CUR_LINE}"
             CUR_LINE=$(cat "${record_for_jump_back}")
             #!!!如果BOOK_CACHE_FILE不存在的话,这里写入的结果要实际测试一下
-            echo $((hold_cur_line - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) >"${record_for_jump_back}"
+            echo $((hold_cur_line - 1 - CACHE_TOTAL_LINES + CACHE_CUR_LINE - show_lines_number)) > "${record_for_jump_back}"
         else
             echo "${error_message}"
             exit 1

@@ -25,33 +25,33 @@ if [[ -z "$IMPL_LOADED" ]]; then
         field_name="${1}"
 
         case "${field_name}" in
-        "BOOK_NAME")
-            echo 1
-            ;;
-        "ALIAS")
-            echo 2
-            ;;
-        "READING")
-            echo 3
-            ;;
-        "TOTAL_LINES")
-            echo 4
-            ;;
-        "CUR_LINE")
-            echo 5
-            ;;
-        "CACHE_TOTAL_LINES")
-            echo 6
-            ;;
-        "CACHE_CUR_LINE")
-            echo 7
-            ;;
-        "FINISH")
-            echo 8
-            ;;
-        *)
-            exit 1
-            ;;
+            "BOOK_NAME")
+                echo 1
+                ;;
+            "ALIAS")
+                echo 2
+                ;;
+            "READING")
+                echo 3
+                ;;
+            "TOTAL_LINES")
+                echo 4
+                ;;
+            "CUR_LINE")
+                echo 5
+                ;;
+            "CACHE_TOTAL_LINES")
+                echo 6
+                ;;
+            "CACHE_CUR_LINE")
+                echo 7
+                ;;
+            "FINISH")
+                echo 8
+                ;;
+            *)
+                exit 1
+                ;;
         esac
     }
 
@@ -89,7 +89,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #先假设给出的参数是book name
         BOOK_NAME="${1}"
 
-        if ! _query_book_in_tube_top >/dev/null; then
+        if ! _query_book_in_tube_top > /dev/null; then
             #说明不是book name,有可能是别名
             if book_name=$(_get_book_name_by_alias "${1}"); then
                 #返回值为0,说明在tube_top文件中查询到了别名
@@ -122,7 +122,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         local book
         local reading_book_name
         if book=$(_query_the_reading_book_in_tube_top); then
-            IFS=',' read -r -a parts <<<"${book}"
+            IFS=',' read -r -a parts <<< "${book}"
             reading_book_name="${parts[0]}"
         fi
 
@@ -155,7 +155,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         local book
         local previous_reading_book_name
         if book=$(_query_the_previous_reading_book_in_tube_top); then
-            IFS=',' read -r -a parts <<<"${book}"
+            IFS=',' read -r -a parts <<< "${book}"
             previous_reading_book_name="${parts[0]}"
         fi
 
@@ -180,7 +180,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         awk -F, -v book_name="$BOOK_NAME" -v field_num="$field_num" -v new_value="$new_value" '
             BEGIN {OFS=","} 
             $1 == book_name { $(field_num) = new_value } {print}
-        ' "${TUBE_TOP}" >/tmp/tube_top.txt && mv /tmp/tube_top.txt "${TUBE_TOP}"
+        ' "${TUBE_TOP}" > /tmp/tube_top.txt && mv /tmp/tube_top.txt "${TUBE_TOP}"
     }
 
     #修改全部records的某一个字段
@@ -199,7 +199,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
                 $(field_num)=new_value
                 print
             }
-        ' "${TUBE_TOP}" >/tmp/tube_top.txt && mv /tmp/tube_top.txt "${TUBE_TOP}"
+        ' "${TUBE_TOP}" > /tmp/tube_top.txt && mv /tmp/tube_top.txt "${TUBE_TOP}"
     }
 
     _delete_book_from_tube_top() {
@@ -238,10 +238,10 @@ if [[ -z "$IMPL_LOADED" ]]; then
             BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
         fi
 
-        awk "NR>=${CUR_LINE} && NR<${CUR_LINE}+${cache_lines_count}" "${BOOK_FILE}" >"${BOOK_CACHE_FILE}"
+        awk "NR>=${CUR_LINE} && NR<${CUR_LINE}+${cache_lines_count}" "${BOOK_FILE}" > "${BOOK_CACHE_FILE}"
 
         #update total cache lines and current cache line
-        CACHE_TOTAL_LINES=$(wc -l <"${BOOK_CACHE_FILE}" | xargs)
+        CACHE_TOTAL_LINES=$(wc -l < "${BOOK_CACHE_FILE}" | xargs)
         CACHE_CUR_LINE=1
 
         #update current line in the entire book
@@ -254,11 +254,11 @@ if [[ -z "$IMPL_LOADED" ]]; then
         fi
 
         if [[ ! -f "${CONFIG_FILE}" ]]; then
-            echo "cache_lines_number=1000" >>"${CONFIG_FILE}"
-            echo "show_lines_number=10" >>"${CONFIG_FILE}"
-            echo "enable_line_number=1" >>"${CONFIG_FILE}"
-            echo "enable_color=1" >>"${CONFIG_FILE}"
-            echo "backup_dir=$HOME/backups/tube-top" >>"${CONFIG_FILE}"
+            echo "cache_lines_number=1000" >> "${CONFIG_FILE}"
+            echo "show_lines_number=10" >> "${CONFIG_FILE}"
+            echo "enable_line_number=1" >> "${CONFIG_FILE}"
+            echo "enable_color=1" >> "${CONFIG_FILE}"
+            echo "backup_dir=$HOME/backups/tube-top" >> "${CONFIG_FILE}"
         fi
 
         if [[ ! -f "${COLORS_FILE}" ]]; then
@@ -276,7 +276,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
                 "\033[38;5;95m"  #深洋红色
                 "\033[90m"       #灰色
             )
-            printf "%s\n" "${colors[@]}" >"${COLORS_FILE}"
+            printf "%s\n" "${colors[@]}" > "${COLORS_FILE}"
         fi
 
         if [[ ! -d $ROOT_DIR ]]; then mkdir -p "${ROOT_DIR}"; fi
@@ -298,7 +298,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
     #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量
     _read_record_from_tupe_top() {
         if record=$(_query_book_in_tube_top); then
-            IFS=',' read -r -a parts <<<"${record}"
+            IFS=',' read -r -a parts <<< "${record}"
             ALIAS="${parts[1]}"
             READING="${parts[2]}"
             TOTAL_LINES="${parts[3]}"
@@ -311,6 +311,6 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     _write_record_to_tupe_top() {
         _delete_book_from_tube_top
-        echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >>"${TUBE_TOP}"
+        echo "${BOOK_NAME}","${ALIAS}","${READING}","${TOTAL_LINES}","${CUR_LINE}","${CACHE_TOTAL_LINES}","${CACHE_CUR_LINE}","${FINISH}" >> "${TUBE_TOP}"
     }
 fi

@@ -31,7 +31,7 @@ add_book() {
     cp "${origin_file}" "${BOOK_FILE}"
 
     #register this book
-    TOTAL_LINES=$(wc -l <"${BOOK_FILE}" | xargs)
+    TOTAL_LINES=$(wc -l < "${BOOK_FILE}" | xargs)
 
     #如果传递了"别名"作为第二个参数的话
     if [[ -n "${2}" ]]; then

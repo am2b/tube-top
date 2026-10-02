@@ -10,15 +10,15 @@ sort_lines_by_alias() {
     local sorted_records=/tmp/sorted_records
 
     # 先分离出所有第二列为'none'的记录
-    awk -F, '$2 == "none" {print $0}' "$TUBE_TOP" >"${none_records}"
+    awk -F, '$2 == "none" {print $0}' "$TUBE_TOP" > "${none_records}"
 
     # 再将其他记录进行排序
-    awk -F, '$2 != "none" {print $0}' "$TUBE_TOP" | sort -t, -k2,2 >"${sorted_records}"
+    awk -F, '$2 != "none" {print $0}' "$TUBE_TOP" | sort -t, -k2,2 > "${sorted_records}"
 
     # 将排序后的记录与'none'记录合并,'none'记录放在后面
     #-s:文件存在,并且非空
     if [[ -s "${none_records}" ]]; then
-        cat "${sorted_records}" "${none_records}" >"${sorted_tube_top}"
+        cat "${sorted_records}" "${none_records}" > "${sorted_tube_top}"
     else
         mv "${sorted_records}" "${sorted_tube_top}"
     fi

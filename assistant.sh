@@ -5,11 +5,11 @@ script=$(basename "$0")
 required_tools() {
     local tools=("sed" "awk")
     for tool in "${tools[@]}"; do
-        if ! command -v "$tool" >/dev/null 2>&1; then
+        if ! command -v "$tool" > /dev/null 2>&1; then
             echo "$tool 未安装,请安装 GNU Coreutils"
             exit 1
         fi
-        if ! "$tool" --version 2>/dev/null | grep -q "GNU"; then
+        if ! "$tool" --version 2> /dev/null | grep -q "GNU"; then
             echo "$tool 不是 GNU Coreutils 版本,请安装正确版本"
             exit 1
         fi
@@ -17,7 +17,7 @@ required_tools() {
 
     tools=("trash")
     for tool in "${tools[@]}"; do
-        if ! command -v "$tool" >/dev/null 2>&1; then
+        if ! command -v "$tool" > /dev/null 2>&1; then
             echo "$tool 未安装"
             exit 1
         fi
@@ -68,69 +68,69 @@ usage() {
 parse_options() {
     while getopts ":ha:p:n:qsguj:f:or:d:lb" opt; do
         case "${opt}" in
-        h)
-            usage
-            ;;
-        a)
-            backup
+            h)
+                usage
+                ;;
+            a)
+                backup
 
-            #${!OPTIND}使用了间接引用(indirect reference)来获取OPTIND指向的变量的值
-            if [ -n "${!OPTIND}" ]; then
-                add_book "$OPTARG" "${!OPTIND}"
-                #更新OPTIND,让它指向下一个未被解析的命令行参数
-                OPTIND=$((OPTIND + 1))
-            else
-                add_book "$OPTARG"
-            fi
-            ;;
-        p)
-            pin "$OPTARG"
-            ;;
-        n)
-            set_alias "$OPTARG"
-            ;;
-        q)
-            quickly_switch
-            ;;
-        s)
-            print
-            ;;
-        g)
-            print_last_again
-            ;;
-        u)
-            page_up
-            ;;
-        j)
-            jump "$OPTARG"
-            ;;
-        f)
-            search "$OPTARG"
-            ;;
-        o)
-            ocd
-            ;;
-        r)
-            backup
+                #${!OPTIND}使用了间接引用(indirect reference)来获取OPTIND指向的变量的值
+                if [ -n "${!OPTIND}" ]; then
+                    add_book "$OPTARG" "${!OPTIND}"
+                    #更新OPTIND,让它指向下一个未被解析的命令行参数
+                    OPTIND=$((OPTIND + 1))
+                else
+                    add_book "$OPTARG"
+                fi
+                ;;
+            p)
+                pin "$OPTARG"
+                ;;
+            n)
+                set_alias "$OPTARG"
+                ;;
+            q)
+                quickly_switch
+                ;;
+            s)
+                print
+                ;;
+            g)
+                print_last_again
+                ;;
+            u)
+                page_up
+                ;;
+            j)
+                jump "$OPTARG"
+                ;;
+            f)
+                search "$OPTARG"
+                ;;
+            o)
+                ocd
+                ;;
+            r)
+                backup
 
-            reset_book "$OPTARG"
-            ;;
-        d)
-            backup
+                reset_book "$OPTARG"
+                ;;
+            d)
+                backup
 
-            delete_book "$OPTARG"
-            ;;
-        l)
-            backup
+                delete_book "$OPTARG"
+                ;;
+            l)
+                backup
 
-            list_all_books
-            ;;
-        b)
-            backup
-            ;;
-        *)
-            usage
-            ;;
+                list_all_books
+                ;;
+            b)
+                backup
+                ;;
+            *)
+                usage
+                ;;
         esac
     done
 

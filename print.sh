@@ -23,20 +23,20 @@ _do_print() {
         #with line number
         #awk -v start="$CACHE_CUR_LINE" -v number="$show_lines_real_number" -v origin_current_line="$CUR_LINE" -v cache_total_lines="$CACHE_TOTAL_LINES" 'NR>=start && NR<(start + number) {print (origin_current_line - cache_total_lines - 1 + NR), $0}' "${BOOK_CACHE_FILE}"
         #with color
-        mapfile -t colors <"${COLORS_FILE}"
+        mapfile -t colors < "${COLORS_FILE}"
         local colors_size="${#colors[@]}"
         local color_index_file=/tmp/tube_top_color_index
         local color_index
         local selected_color
         if [[ ! -f "${color_index_file}" ]]; then
-            echo 0 >"${color_index_file}"
+            echo 0 > "${color_index_file}"
         fi
         color_index=$(cat "${color_index_file}")
         local next_color_index=$((color_index + 1))
         if ((next_color_index == colors_size)); then
             rm "${color_index_file}"
         else
-            echo "${next_color_index}" >"${color_index_file}"
+            echo "${next_color_index}" > "${color_index_file}"
         fi
         selected_color=${colors[$color_index]}
 
