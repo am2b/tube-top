@@ -50,10 +50,6 @@ add_book() {
         alias_name="${2}"
     fi
 
-    #do cache
-    #_cache "${BOOK_NAME}"
-
-    #_write_record_to_tupe_top
     local reading original_next_line cache_total_lines cache_next_line finish ever_finished
     reading=false
     original_next_line=1
