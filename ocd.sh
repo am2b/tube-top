@@ -4,27 +4,38 @@ SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 
 ocd() {
-    BOOK_NAME=$(_get_the_reading_book_name)
-    if [[ -z $BOOK_NAME ]]; then
-        echo "${msg_no_reading_book}"
+    local title
+    title=$(_get_title_of_the_reading_book)
+    if [[ -z $title ]]; then
+        echo "${MSG_NO_READING_BOOK}"
         exit 1
     fi
 
-    BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
+    local record
+    if ! record=$(_get_record "${title}"); then
+        echo "error:get record of title:${title} failed in function:_do_print"
+        exit 1
+    fi
 
-    _read_record_from_tupe_top
+    local original_next_line
+    original_next_line=$(_get_original_next_line_of_record "${record}")
+
+    local cache_total_lines cache_next_line
+    cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
+    cache_next_line=$(_get_cache_next_line_of_record "${record}")
 
     local next_line
-    next_line=$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES + CACHE_NEXT_LINE - 1))
+    next_line=$((original_next_line - cache_total_lines + cache_next_line - 1))
     #整数除法自动向下取整
     local batch_num=$(((next_line - 1) / 10))
     #第n批次所对应的行号:n * 10 + 1 ~ (n + 1) * 10
-    ORIGINAL_NEXT_LINE=$((batch_num * 10 + 1))
+    original_next_line=$((batch_num * 10 + 1))
+    _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
 
-    if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
-    _cache
+    local cache_file
+    cache_file="${CACHE_DIR}"/"${title}"
+    if [[ -f "${cache_file}" ]]; then rm "${cache_file}"; fi
 
-    _write_record_to_tupe_top
     exit 0
 }
 
