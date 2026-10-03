@@ -17,7 +17,7 @@ set_alias() {
     local title
     title=$(_get_title_of_the_reading_book)
     if [[ -z $title ]]; then
-        echo "${msg_no_reading_book}"
+        echo "${MSG_NO_READING_BOOK}"
         exit 1
     fi
 
