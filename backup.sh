@@ -4,6 +4,14 @@ SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 
 delete_old_files() {
+    if [[ -z "${1}" ]]; then
+        echo "error:the parameter is empty in function:delete_old_files"
+    fi
+
+    if [[ -z "${2}" ]]; then
+        echo "error:the parameter is empty in function:delete_old_files"
+    fi
+
     local dest_dir
     local keep_num
     dest_dir=$(realpath "${1}")
@@ -31,17 +39,17 @@ delete_old_files() {
 
 backup() {
     #注意:如果config文件里面的backup_dir写成了~/some_dir的形式的话,从config中读取的值是一个字符串,而字符串里面的~是不会自动解析的
-    if [[ -z "${backup_dir}" ]]; then
-        echo "error:read backup dir from config failed"
+    if [[ -z "${BACKUP_DIR}" ]]; then
+        echo "error:backup dir:${BACKUP_DIR} is empty in function:backup"
         exit 1
     fi
 
-    if [[ ! -d "${backup_dir}" ]]; then
-        mkdir -p "${backup_dir}"
+    if [[ ! -d "${BACKUP_DIR}" ]]; then
+        mkdir -p "${BACKUP_DIR}"
     fi
 
     if [[ ! -d "${HOME}"/.trash ]]; then
-        echo "error:no trash can found"
+        echo "error:no trash can found in function:backup"
         exit 1
     fi
 
@@ -50,8 +58,8 @@ backup() {
     TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
     backup_name="tube_top_${TIMESTAMP}"
 
-    cp "${TUBE_TOP}" "${backup_dir}/${backup_name}"
+    cp "${TUBE_TOP}" "${BACKUP_DIR}/${backup_name}"
 
     #删除旧的备份文件
-    delete_old_files "${backup_dir}" 100
+    delete_old_files "${BACKUP_DIR}" 100
 }
