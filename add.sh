@@ -32,7 +32,7 @@ add_book() {
     book_file="${BOOKS_DIR}"/"${title}"
 
     #检查数据库中是否已经有了要添加的书
-    if [[ -f "${book_file}" ]] || _query_book_in_tube_top; then
+    if [[ -f "${book_file}" ]] || _get_record "${title}"; then
         echo "error:the library already contains a book with the same title:${title} in function:add_book"
         exit 1
     fi
