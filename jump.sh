@@ -3,111 +3,157 @@
 SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
+source "${SELF_ABS_DIR}"/cache.sh
 
+#参数:[+/-]num/0/e(无符号整数,有符号整数,0,e)
 jump() {
-    BOOK_NAME=$(_get_the_reading_book_name)
-    if [[ -z $BOOK_NAME ]]; then
-        echo "${msg_no_reading_book}"
-        exit 1
+    if [[ -z "${1}" ]]; then
+        echo "error:the parameter is empty in function:jump"
     fi
-    BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
-
-    _read_record_from_tupe_top
 
     local number="$1"
     local error_message
     error_message="parameter error, please enter a line number, you can use a positive or negative sign to indicate how many lines to jump back or forward"
 
+    local title
+    title=$(_get_title_of_the_reading_book)
+    if [[ -z $title ]]; then
+        echo "${MSG_NO_READING_BOOK}"
+        exit 1
+    fi
+
+    local record
+    if ! record=$(_get_record "${title}"); then
+        echo "error:get record of title:${title} failed in function:jump"
+        exit 1
+    fi
+
+    local original_total_lines original_next_line
+    original_total_lines=$(_get_original_total_lines_of_record "${record}")
+    original_next_line=$(_get_original_next_line_of_record "${record}")
+
+    local cache_total_lines cache_next_line
+    cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
+    cache_next_line=$(_get_cache_next_line_of_record "${record}")
+
+    local cache_file
+    cache_file="${CACHE_DIR}"/"${title}"
+
     local record_for_jump_back
     record_for_jump_back=/tmp/tube_top_jump
 
+    #如果number是一个以+开头的整数‌的话
     if [[ "$number" =~ ^\+[0-9]+$ ]]; then
         #向后跳
         local number_without_sign
         number_without_sign="${number#[-+]}"
+        #缓存中还没有被打印的行数
         local cache_down_lines
-        #如果BOOK_CACHE_FILE不存在的话,这里计算的结果为1
-        cache_down_lines=$((CACHE_TOTAL_LINES - CACHE_NEXT_LINE + 1))
+        #要改
+        #如果cache_file不存在的话,这里计算的结果为1
+        cache_down_lines=$((cache_total_lines - cache_next_line + 1))
         if ((cache_down_lines >= number_without_sign)); then
-            echo $((ORIGINAL_NEXT_LINE - 1 - CACHE_TOTAL_LINES + CACHE_NEXT_LINE - show_lines_number)) > "${record_for_jump_back}"
-            CACHE_NEXT_LINE=$((CACHE_NEXT_LINE + number_without_sign))
-            _write_record_to_tupe_top
+            echo $((original_next_line - 1 - cache_total_lines + cache_next_line - SHOW_LINES_NUMBER)) > "${record_for_jump_back}"
+            cache_next_line=$((cache_next_line + number_without_sign))
+            _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" "${cache_next_line}"
             return 0
         else
-            number=$((ORIGINAL_NEXT_LINE + number_without_sign - cache_down_lines))
+            number=$((original_next_line + number_without_sign - cache_down_lines))
         fi
+    #如果number是一个以-开头的整数‌的话
     elif [[ "$number" =~ ^-[0-9]+$ ]]; then
         #向前跳
         local number_without_sign
         number_without_sign="${number#[-+]}"
+        #缓存中已经被打印的行数
         local cache_up_lines
-        #如果BOOK_CACHE_FILE不存在的话,这里计算的结果为-1
-        cache_up_lines=$((CACHE_NEXT_LINE - 1))
+        #要改
+        #如果cache_file不存在的话,这里计算的结果为-1
+        cache_up_lines=$((cache_next_line - 1))
         if ((cache_up_lines >= number_without_sign)); then
-            echo $((ORIGINAL_NEXT_LINE - 1 - CACHE_TOTAL_LINES + CACHE_NEXT_LINE - show_lines_number)) > "${record_for_jump_back}"
-            CACHE_NEXT_LINE=$((CACHE_NEXT_LINE - number_without_sign))
-            _write_record_to_tupe_top
+            echo $((original_next_line - 1 - cache_total_lines + cache_next_line - SHOW_LINES_NUMBER)) > "${record_for_jump_back}"
+            cache_next_line=$((cache_next_line - number_without_sign))
+            _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" "${cache_next_line}"
             return 0
         else
-            number=$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES + cache_up_lines - number_without_sign))
+            number=$((original_next_line - cache_total_lines + cache_up_lines - number_without_sign))
         fi
     fi
 
     #jump to the end
     if [[ "${number}" == 'e' ]]; then
-        local module=$((ORIGINAL_TOTAL_LINES % show_lines_number))
-        number=$((ORIGINAL_TOTAL_LINES - module + 1))
+        local module=$((original_total_lines % SHOW_LINES_NUMBER))
+        number=$((original_total_lines - module + 1))
     fi
 
+    #如果number是一个非负整数的话(跳转到绝对行号)
     if [[ "$number" =~ ^[0-9]+$ ]]; then
         #跳到实际的行号
-        if ((number <= ORIGINAL_TOTAL_LINES)) && ((number > 0)); then
-            #如果BOOK_CACHE_FILE不存在的话,这里写入的结果为-1
-            echo $((ORIGINAL_NEXT_LINE - 1 - CACHE_TOTAL_LINES + CACHE_NEXT_LINE - show_lines_number)) > "${record_for_jump_back}"
-            ORIGINAL_NEXT_LINE="${number}"
+        if ((number <= original_total_lines)) && ((number > 0)); then
+            #要改
+            #如果cache_file不存在的话,这里写入的结果为-1
+            echo $((original_next_line - 1 - cache_total_lines + cache_next_line - SHOW_LINES_NUMBER)) > "${record_for_jump_back}"
+            original_next_line="${number}"
+            _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
         elif ((number == 0)); then
             #jump back
             if [[ ! -f "${record_for_jump_back}" ]]; then return 0; fi
             local hold_cur_line
-            hold_cur_line="${ORIGINAL_NEXT_LINE}"
-            ORIGINAL_NEXT_LINE=$(cat "${record_for_jump_back}")
-            #!!!如果BOOK_CACHE_FILE不存在的话,这里写入的结果要实际测试一下
-            echo $((hold_cur_line - 1 - CACHE_TOTAL_LINES + CACHE_NEXT_LINE - show_lines_number)) > "${record_for_jump_back}"
+            hold_cur_line="${original_next_line}"
+            original_next_line=$(cat "${record_for_jump_back}")
+            _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
+            #!!!如果cache_file不存在的话,这里写入的结果要实际测试一下
+            echo $((hold_cur_line - 1 - cache_total_lines + cache_next_line - SHOW_LINES_NUMBER)) > "${record_for_jump_back}"
         else
             echo "${error_message}"
             exit 1
         fi
-        if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
-        #CACHE_TOTAL_LINES=0
-        #CACHE_NEXT_LINE=0
-        #FINISH=false
-        _cache
 
-        _write_record_to_tupe_top
+        if [[ -f "${cache_file}" ]]; then rm "${cache_file}"; fi
+        #_cache
     else
         echo "${error_message}"
         exit 1
     fi
 }
 
+#没有参数
 jump_to_last() {
-    BOOK_NAME=$(_get_the_reading_book_name)
-    BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
-
-    _read_record_from_tupe_top
-
-    local cache_up_lines
-    cache_up_lines=$((CACHE_NEXT_LINE - 1))
-    if ((cache_up_lines >= show_lines_number)); then
-        CACHE_NEXT_LINE=$((CACHE_NEXT_LINE - show_lines_number))
-    else
-        ORIGINAL_NEXT_LINE=$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES + cache_up_lines - show_lines_number))
-        #CACHE_TOTAL_LINES=0
-        #CACHE_NEXT_LINE=0
-        #FINISH=false
-        if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
-        _cache
+    local title
+    title=$(_get_title_of_the_reading_book)
+    if [[ -z $title ]]; then
+        echo "${MSG_NO_READING_BOOK}"
+        exit 1
     fi
 
-    _write_record_to_tupe_top
+    local record
+    if ! record=$(_get_record "${title}"); then
+        echo "error:get record of title:${title} failed in function:jump"
+        exit 1
+    fi
+
+    local original_next_line
+    original_next_line=$(_get_original_next_line_of_record "${record}")
+
+    local cache_total_lines cache_next_line
+    cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
+    cache_next_line=$(_get_cache_next_line_of_record "${record}")
+
+    cache_file="${CACHE_DIR}"/"${title}"
+
+    #缓存中下次要读取的行,其上面的行数
+    local cache_up_lines
+    cache_up_lines=$((cache_next_line - 1))
+    if ((cache_up_lines >= SHOW_LINES_NUMBER)); then
+        cache_next_line=$((cache_next_line - SHOW_LINES_NUMBER))
+        _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" "${cache_next_line}"
+    else
+        #回退
+        original_next_line=$((original_next_line - cache_total_lines + cache_up_lines - SHOW_LINES_NUMBER))
+        _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
+        if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
+
+        #认为做cache只是在打印的时候才做的事情
+        #_cache
+    fi
 }
