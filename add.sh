@@ -45,7 +45,7 @@ add_book() {
     original_total_lines=$(wc -l < "${book_file}" | xargs)
 
     #如果传递了"别名"作为第二个参数的话
-    local alias_name
+    local alias_name="none"
     if [[ -n "${2}" ]]; then
         alias_name="${2}"
     fi
