@@ -139,6 +139,7 @@ jump_to_last() {
     cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
     cache_next_line=$(_get_cache_next_line_of_record "${record}")
 
+    local cache_file
     cache_file="${CACHE_DIR}"/"${title}"
 
     #缓存中下次要读取的行,其上面的行数
