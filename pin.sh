@@ -14,19 +14,7 @@ pin() {
 
     #判断参数是title还是alias
     local title
-    local result
-    if ! result=$(_input_is_title_or_alias "${1}"); then
-        echo "error:the parameter is neither title nor an alias in function:pin"
-        exit 1
-    fi
-    if [[ "${result}" == "title" ]]; then
-        title="${1}"
-    elif [[ "${result}" == "alias" ]]; then
-        if ! title=$(_get_title_by_alias "${1}"); then
-            echo "error:get title from alias failed in function:pin"
-            exit 1
-        fi
-    fi
+    title=$(_get_title_from_input "${1}")
 
     #目前正在读的书的title
     local title_of_the_reading_book

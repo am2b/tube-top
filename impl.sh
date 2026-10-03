@@ -96,9 +96,15 @@ if [[ -z "$IMPL_LOADED" ]]; then
         fi
     }
 
-    #判断用户输入的是title还是alias
-    _input_is_title_or_alias() {
+    #从用户输入(title,alias)获取到title
+    _get_title_from_input() {
+        if [[ -z "${1}" ]]; then
+            echo "error:the parameter is empty in function:_get_title_from_input"
+            exit 1
+        fi
+
         input="$1"
+        local title
 
         result=$(awk -F',' -v value="$input" '
             $1 == value {
@@ -113,15 +119,18 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
         case "$result" in
             1)
-                echo "title"
+                title="${input}"
                 ;;
             2)
-                echo "alias"
+                title=$(_get_title_by_alias "${input}")
                 ;;
             *)
+                echo "error:the parameter is neither title nor an alias in function:reset_book"
                 exit 1
                 ;;
         esac
+
+        echo "${title}"
     }
 
     #获取正在读的书的record,返回的是一个完整的record
