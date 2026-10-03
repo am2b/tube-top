@@ -4,26 +4,45 @@ SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
+#参数可以是title或者alias
 pin() {
-    _set_BOOK_NAME_by_parameter "${1}"
-
-    local last_reading_book_name
-    last_reading_book_name=$(_get_the_reading_book_name)
-
-    if [[ -n "${last_reading_book_name}" ]] && [[ "${BOOK_NAME}" == "${last_reading_book_name}" ]]; then
-        exit 0
+    #检查参数
+    if [[ -z "${1}" ]]; then
+        echo "error:the parameter is empty in function:pin"
+        exit 1
     fi
 
-    #change the reading status of all books to false
-    _update_field_of_all_records_in_tube_top "READING" false
-
-    local hold_book_name
-    if [[ -n "${last_reading_book_name}" ]]; then
-        hold_book_name="${BOOK_NAME}"
-        BOOK_NAME="${last_reading_book_name}"
-        _update_field_in_tube_top "READING" previous
-        BOOK_NAME="${hold_book_name}"
+    #参数可能是别名
+    local title
+    local result
+    if ! result=$(_input_is_title_or_alias "${1}"); then
+        echo "error:the parameter is neither title nor an alias in function:pin"
+        exit 1
     fi
 
+    if [[ "${result}" == "title" ]]; then
+        title="${1}"
+    elif [[ "${result}" == "alias" ]]; then
+        if ! title=$(_get_title_by_alias "${1}"); then
+            echo "error:get title from alias failed in function:pin"
+            exit 1
+        fi
+    fi
+
+    #目前正在读的书的title
+    local title_of_the_reading_book
+    title_of_the_reading_book=$(_get_title_of_the_reading_book)
+
+    if [[ -n "${title_of_the_reading_book}" ]]; then
+        #是否在重复pin
+        if [[ "${title}" == "${title_of_the_reading_book}" ]]; then
+            exit 0
+        fi
+
+        #将目前正在读的书的状态改为:previous
+        _update_field_in_tube_top "${title_of_the_reading_book}" "READING" "previous"
+    fi
+
+    #pin
     _update_field_in_tube_top "READING" true
 }
