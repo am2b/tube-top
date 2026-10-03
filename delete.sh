@@ -5,25 +5,44 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 delete_book() {
-    _set_BOOK_NAME_by_parameter "${1}"
+    if [[ -z "${1}" ]]; then
+        echo "error:the parameter is empty in function:reset_book"
+    fi
 
-    BOOK_FILE="${BOOKS_DIR}"/"${BOOK_NAME}"
-    BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
+    #判断参数是title还是alias
+    local title
+    local result
+    if ! result=$(_input_is_title_or_alias "${1}"); then
+        echo "error:the parameter is neither title nor an alias in function:reset_book"
+        exit 1
+    fi
+    if [[ "${result}" == "title" ]]; then
+        title="${1}"
+    elif [[ "${result}" == "alias" ]]; then
+        if ! title=$(_get_title_by_alias "${1}"); then
+            echo "error:get title from alias failed in function:reset_book"
+            exit 1
+        fi
+    fi
 
-    if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
-    if [[ -f "${BOOK_FILE}" ]]; then rm "${BOOK_FILE}"; fi
+    local book_file cache_file
+    book_file="${BOOKS_DIR}"/"${title}"
+    cache_file="${CACHE_DIR}"/"${title}"
+    if [[ -f "${cache_file}" ]]; then rm "${cache_file}"; fi
+    if [[ -f "${book_file}" ]]; then rm "${book_file}"; fi
 
-    _delete_book_from_tube_top
+    #删除record
+    sed -i "/^$title/d" "${TUBE_TOP}"
 
     #删除完成后,检查是否存在reading的书
-    local reading_book_name
-    reading_book_name=$(_get_the_reading_book_name)
-    if [[ -z "${reading_book_name}" ]]; then
+    local title_reading
+    title_reading=$(_get_title_of_the_reading_book)
+    if [[ -z "${title_reading}" ]]; then
         #再检查是否有previous,如果有的话,将其设置为reading
-        local previous_book_name
-        previous_book_name=$(_get_the_previous_reading_book_name)
-        if [[ -n "${previous_book_name}" ]]; then
-            pin "${previous_book_name}"
+        local title_previous
+        title_previous=$(_get_title_of_the_previous)
+        if [[ -n "${title_previous}" ]]; then
+            pin "${title_previous}"
         fi
     fi
 
