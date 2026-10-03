@@ -4,21 +4,35 @@ SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
-#重置一本已经读完的书(使其处于未读的状态)
+#参数:title或者alias
 reset_book() {
-    _set_BOOK_NAME_by_parameter "${1}"
+    if [[ -z "${1}" ]]; then
+        echo "error:the parameter is empty in function:reset_book"
+    fi
 
-    BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
-    if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
+    #判断参数是title还是alias
+    local title
+    local result
+    if ! result=$(_input_is_title_or_alias "${1}"); then
+        echo "error:the parameter is neither title nor an alias in function:reset_book"
+        exit 1
+    fi
+    if [[ "${result}" == "title" ]]; then
+        title="${1}"
+    elif [[ "${result}" == "alias" ]]; then
+        if ! title=$(_get_title_by_alias "${1}"); then
+            echo "error:get title from alias failed in function:reset_book"
+            exit 1
+        fi
+    fi
 
-    #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量
-    _read_record_from_tupe_top
+    local cache_file
+    cache_file="${CACHE_DIR}"/"${title}"
+    if [[ -f "${cache_file}" ]]; then rm "${cache_file}"; fi
 
-    READING=false
-    ORIGINAL_NEXT_LINE=1
-    CACHE_TOTAL_LINES=0
-    CACHE_NEXT_LINE=0
-    FINISH=false
-
-    _write_record_to_tupe_top
+    _update_field_in_tube_top "${title}" "READING" false
+    _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" 1
+    _update_field_in_tube_top "${title}" "CACHE_TOTAL_LINES" 0
+    _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" 1
+    _update_field_in_tube_top "${title}" "FINISH" false
 }
