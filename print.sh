@@ -3,25 +3,51 @@
 SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
+source "${SELF_ABS_DIR}"/cache.sh
 
+#没有参数
 _do_print() {
+    local title
+    title=$(_get_title_of_the_reading_book)
+    if [[ -z $title ]]; then
+        echo "${MSG_NO_READING_BOOK}"
+        exit 1
+    fi
+
+    local record
+    if ! record=$(_get_record "${title}"); then
+        echo "error:get record of title:${title} failed in function:_do_print"
+        exit 1
+    fi
+
+    local original_total_lines original_next_line
+    original_total_lines=$(_get_original_total_lines_of_record "${record}")
+    original_next_line=$(_get_original_next_line_of_record "${record}")
+
+    local cache_total_lines cache_next_line
+    cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
+    cache_next_line=$(_get_cache_next_line_of_record "${record}")
+
     local cache_left_lines
-    cache_left_lines=$((CACHE_TOTAL_LINES - CACHE_NEXT_LINE + 1))
+    cache_left_lines=$((cache_total_lines - cache_next_line + 1))
 
     local show_lines_real_number
-    if [[ "${cache_left_lines}" -lt "${show_lines_number}" ]]; then
+    if [[ "${cache_left_lines}" -lt "${SHOW_LINES_NUMBER}" ]]; then
         show_lines_real_number="${cache_left_lines}"
     else
-        show_lines_real_number="${show_lines_number}"
+        show_lines_real_number="${SHOW_LINES_NUMBER}"
     fi
+
+    local cache_file
+    cache_file="${CACHE_DIR}"/"${title}"
 
     if [[ "${show_lines_real_number}" -ne 0 ]]; then
         #without line number
-        #tail -n +"${CACHE_NEXT_LINE}" "${BOOK_CACHE_FILE}" | head -n "${show_lines_real_number}"
+        #tail -n +"${cache_next_line}" "${cache_file}" | head -n "${show_lines_real_number}"
         #with line number
-        #nl -v$((ORIGINAL_NEXT_LINE - CACHE_TOTAL_LINES)) "${BOOK_CACHE_FILE}" | tail -n +"${CACHE_NEXT_LINE}" | head -n "${show_lines_real_number}"
+        #nl -v$((original_next_line - cache_total_lines)) "${cache_file}" | tail -n +"${cache_next_line}" | head -n "${show_lines_real_number}"
         #with line number
-        #awk -v start="$CACHE_NEXT_LINE" -v number="$show_lines_real_number" -v origin_current_line="$ORIGINAL_NEXT_LINE" -v cache_total_lines="$CACHE_TOTAL_LINES" 'NR>=start && NR<(start + number) {print (origin_current_line - cache_total_lines - 1 + NR), $0}' "${BOOK_CACHE_FILE}"
+        #awk -v start="$cache_next_line" -v number="$show_lines_real_number" -v origin_current_line="$original_next_line" -v cache_total_lines="$cache_total_lines" 'NR>=start && NR<(start + number) {print (origin_current_line - cache_total_lines - 1 + NR), $0}' "${cache_file}"
         #with color
         mapfile -t colors < "${COLORS_FILE}"
         local colors_size="${#colors[@]}"
@@ -50,15 +76,15 @@ _do_print() {
 
         local reset_color="\033[0m"
 
-        awk -v start="$CACHE_NEXT_LINE" \
+        awk -v start="$cache_next_line" \
             -v number="$show_lines_real_number" \
-            -v origin_current_line="$ORIGINAL_NEXT_LINE" \
-            -v cache_total_lines="$CACHE_TOTAL_LINES" \
+            -v origin_current_line="$original_next_line" \
+            -v cache_total_lines="$cache_total_lines" \
             -v selected_color="$selected_color" \
             -v line_number_color="$line_number_color" \
             -v reset_color="$reset_color" \
-            -v enable_line_number="$enable_line_number" \
-            -v enable_color="$enable_color" \
+            -v enable_line_number="$ENABLE_LINE_NUMBER" \
+            -v enable_color="$ENABLE_COLOR" \
             '
             NR >= start && NR < (start + number) {
                 #是否打印行号
@@ -78,81 +104,58 @@ _do_print() {
                 else {
                     printf "%s\n", $0
                 }
-            }' "${BOOK_CACHE_FILE}"
+            }' "${cache_file}"
 
-        #update current cache line
-        CACHE_NEXT_LINE=$((CACHE_NEXT_LINE + show_lines_real_number))
+        cache_next_line=$((cache_next_line + show_lines_real_number))
+        _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" "${cache_next_line}"
     fi
 }
 
+#没有参数
 print() {
-    BOOK_NAME=$(_get_the_reading_book_name)
-    if [[ -z $BOOK_NAME ]]; then
-        echo "${msg_no_reading_book}"
+    local title
+    title=$(_get_title_of_the_reading_book)
+    if [[ -z $title ]]; then
+        echo "${MSG_NO_READING_BOOK}"
         exit 1
     fi
 
-    BOOK_FILE="${BOOKS_DIR}"/"${BOOK_NAME}"
-    BOOK_CACHE_FILE="${CACHE_DIR}"/"${BOOK_NAME}"
+    local record
+    if ! record=$(_get_record "${title}"); then
+        echo "error:get record of title:${title} failed in function:print"
+        exit 1
+    fi
 
-    #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量
-    _read_record_from_tupe_top
-
-    if [[ "${FINISH}" == true ]]; then
-        echo "You have finished the book:${BOOK_NAME}"
-        echo "You can reset the book:tube_top.sh -r ${BOOK_NAME}"
+    local finish
+    finish=$(_get_finish_of_record "${record}")
+    if [[ "${finish}" == true ]]; then
+        echo "You have finished the book:${title}"
+        echo "You can reset the book:tube_top.sh -r ${title}"
         exit 0
     fi
 
-    local book
-    if ! book=$(_query_book_in_tube_top); then
-        echo "error:the book:${BOOK_NAME} was not found in ${TUBE_TOP}"
-        exit 1
-    fi
-
-    #需要做cache的3中情形:
-    #1,还没有cache
-    #2,cache被完美消耗完了
-    #3,cache无法被完美消耗完,剩下的行数小于show_lines_number
-
-    #刚开始读该书(还没有cache)
-    if [[ ! -f "${BOOK_CACHE_FILE}" ]]; then
-        #echo "cache 1"
-        _cache
-    else
-        #cache的行数是show_lines_number的整数倍
-        if ((CACHE_NEXT_LINE > CACHE_TOTAL_LINES)); then
-            #echo "cache 2"
-            _cache
-        else
-            #需要回退(剩下的行数小于show_lines_number)
-            local cache_left_lines
-            cache_left_lines=$((CACHE_TOTAL_LINES - CACHE_NEXT_LINE + 1))
-            if ((cache_left_lines < show_lines_number)); then
-                #原始文件里是否还有剩余的行数来支持回退
-                local origin_left_lines
-                origin_left_lines=$((ORIGINAL_TOTAL_LINES - ORIGINAL_NEXT_LINE + 1))
-                if ((origin_left_lines > 0)); then
-                    ORIGINAL_NEXT_LINE=$((ORIGINAL_NEXT_LINE - cache_left_lines))
-                    #echo "cache 3"
-                    _cache
-                fi
-            fi
-        fi
-    fi
+    _cache
 
     _do_print
 
-    #update the finish flag
-    if [[ "${ORIGINAL_NEXT_LINE}" -gt "${ORIGINAL_TOTAL_LINES}" && "${CACHE_NEXT_LINE}" -gt "${CACHE_TOTAL_LINES}" ]]; then
-        FINISH=true
-        EVER_FINISHED=true
-        echo "You have finished the book:${BOOK_NAME}"
-    fi
+    #检查是否读完了
+    local original_total_lines original_next_line
+    original_total_lines=$(_get_original_total_lines_of_record "${record}")
+    original_next_line=$(_get_original_next_line_of_record "${record}")
 
-    _write_record_to_tupe_top
+    local cache_total_lines cache_next_line
+    cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
+    cache_next_line=$(_get_cache_next_line_of_record "${record}")
+
+    if [[ "${original_next_line}" -gt "${original_total_lines}" && "${cache_next_line}" -gt "${cache_total_lines}" ]]; then
+        _update_field_in_tube_top "${title}" "FINISH" true
+        _update_field_in_tube_top "${title}" "EVER_FINISH" true
+
+        echo "You have finished the book:${title}"
+    fi
 }
 
+#没有参数
 print_last_again() {
     jump_to_last
 
