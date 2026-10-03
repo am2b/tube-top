@@ -5,15 +5,23 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 set_alias() {
-    alias_name="${1}"
+    #检查参数
+    if [[ -z "${1}" ]]; then
+        echo "error:the parameter is empty in function:set_alias"
+        exit 1
+    fi
 
-    BOOK_NAME=$(_get_the_reading_book_name)
-    if [[ -z $BOOK_NAME ]]; then
+    local alias
+    alias="${1}"
+
+    local title
+    title=$(_get_title_of_the_reading_book)
+    if [[ -z $title ]]; then
         echo "${msg_no_reading_book}"
         exit 1
     fi
 
-    _update_field_in_tube_top "ALIAS" "${alias_name}"
+    _update_field_in_tube_top "${title}" "ALIAS" "${alias}"
 
     exit 0
 }
