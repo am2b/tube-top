@@ -18,8 +18,6 @@ search() {
         exit 1
     fi
 
-    #首先查询到当前全局变量BOOK_NAME的record,然后根据该record来填充其余的全局变量
-    local record
     if ! record=$(_get_record "${title}"); then
         echo "error:get record of title:${title} failed in function:jump"
         exit 1
@@ -28,8 +26,8 @@ search() {
     local finish
     finish=$(_get_finish_of_record "${record}")
     if [[ "${finish}" == true ]]; then
-        echo "You have finished the book:${BOOK_NAME}"
-        echo "You can reset the book:tube_top.sh -r ${BOOK_NAME}"
+        echo "You have finished the book:${title}"
+        echo "You can reset the book:tube_top.sh -r ${title}"
         exit 0
     fi
 
