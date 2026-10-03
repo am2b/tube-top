@@ -4,7 +4,7 @@ SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
-#参数可以是title或者alias
+#参数:title或者alias
 pin() {
     #检查参数
     if [[ -z "${1}" ]]; then
@@ -12,14 +12,13 @@ pin() {
         exit 1
     fi
 
-    #参数可能是别名
+    #判断参数是title还是alias
     local title
     local result
     if ! result=$(_input_is_title_or_alias "${1}"); then
         echo "error:the parameter is neither title nor an alias in function:pin"
         exit 1
     fi
-
     if [[ "${result}" == "title" ]]; then
         title="${1}"
     elif [[ "${result}" == "alias" ]]; then
@@ -44,5 +43,5 @@ pin() {
     fi
 
     #pin
-    _update_field_in_tube_top "READING" true
+    _update_field_in_tube_top "${title}" "READING" true
 }
