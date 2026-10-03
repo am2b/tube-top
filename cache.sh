@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
 _do_cache() {
+    if [[ -z "${1}" ]]; then
+        echo "error:the parameter is empty in function:_do_cache"
+    fi
+
+    local record
+    record="${1}"
+
     local original_total_lines original_next_line
     original_total_lines=$(_get_original_total_lines_of_record "${record}")
     original_next_line=$(_get_original_next_line_of_record "${record}")
@@ -52,16 +59,24 @@ _cache() {
         exit 1
     fi
 
+    local original_total_lines original_next_line
+    original_total_lines=$(_get_original_total_lines_of_record "${record}")
+    original_next_line=$(_get_original_next_line_of_record "${record}")
+
+    local cache_total_lines cache_next_line
+    cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
+    cache_next_line=$(_get_cache_next_line_of_record "${record}")
+
     #需要做cache的3中情形:
     #1,还没有cache
     if [[ ! -f "${cache_file}" ]]; then
-        _do_cache
+        _do_cache "${record}"
         return 0
     fi
 
     #2,cache在上次刚好被完美地消耗完了
     if ((cache_next_line == cache_total_lines + 1)); then
-        _do_cache
+        _do_cache "${record}"
         return 0
     fi
 
@@ -76,7 +91,7 @@ _cache() {
             #那就把cache剩下的行"回退"给book file后,再做cache
             original_next_line=$((original_next_line - cache_left_lines))
             _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
-            _do_cache
+            _do_cache "${record}"
             return 0
         fi
         #如果book file里面没有剩余的行了,那就把cache里面剩下的打印了,也不必再做cache了
