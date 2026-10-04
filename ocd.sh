@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-source "${SELF_ABS_DIR}"/impl.sh
-
 ocd() {
     local record title
     if ! record=$(_get_record_of_the_reading_book); then

@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-source "${SELF_ABS_DIR}"/global_variables.sh
-source "${SELF_ABS_DIR}"/impl.sh
-source "${SELF_ABS_DIR}"/cache.sh
-
 #记住当前这屏的起始行号,等-j 0时跳回去
 #参数:title
 _hold_the_starting_line_number() {

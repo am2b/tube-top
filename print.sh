@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-source "${SELF_ABS_DIR}"/global_variables.sh
-source "${SELF_ABS_DIR}"/impl.sh
-source "${SELF_ABS_DIR}"/cache.sh
-
 #没有参数
 _do_print() {
     local record title

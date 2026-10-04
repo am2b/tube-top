@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-source "${SELF_ABS_DIR}"/global_variables.sh
-source "${SELF_ABS_DIR}"/impl.sh
-
 #参数:title或者alias
 reset_book() {
     check_parameters 1 -- "$@" || exit $?
