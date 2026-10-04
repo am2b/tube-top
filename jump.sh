@@ -82,7 +82,7 @@ jump() {
         else
             number=$((original_next_line + number_without_sign - cache_down_lines))
             #往后翻最多翻到最后一行
-            if ((number > original_total_lines)); then number=original_total_lines; fi
+            if ((number > original_total_lines)); then number="${original_total_lines}"; fi
         fi
     #如果number是一个以-开头的整数‌的话
     elif [[ "$number" =~ ^-[0-9]+$ ]]; then
