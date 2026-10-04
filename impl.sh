@@ -49,20 +49,20 @@ if [[ -z "$IMPL_LOADED" ]]; then
     }
 
     _get_config_value() {
-        if (("$#" == 1)); then
-            local key="${1}"
-            local value
-            value=$(awk -F= -v k="$key" '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1); gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); if ($1 == k) print $2}' "${CONFIG_FILE}")
+        check_parameters 1 -- "$@" || return $?
 
-            echo "${value}"
-            return 0
-        else
-            return 1
-        fi
+        local key="${1}"
+        local value
+        value=$(awk -F= -v k="$key" '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1); gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); if ($1 == k) print $2}' "${CONFIG_FILE}")
+
+        echo "${value}"
+        return 0
     }
 
     #注意:参数要用双引号扩起来,以仅表达字符串而不是全局变量
     _get_field_num() {
+        check_parameters 1 -- "$@" || return $?
+
         local field_name
         field_name="${1}"
 
@@ -102,11 +102,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #返回title的record
     _get_record() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the title is empty in function:_get_record"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         local title
         title="${1}"
@@ -123,6 +119,8 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #根据参数给出的别名来查询第一列的title
     _get_title_by_alias() {
+        check_parameters 1 -- "$@" || return $?
+
         local alias
         alias="${1}"
 
@@ -140,10 +138,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #从用户输入(title,alias)获取到title
     _get_title_from_input() {
-        if [[ -z "${1}" ]]; then
-            echo "error:the parameter is empty in function:_get_title_from_input"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         input="$1"
         local title
@@ -243,19 +238,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #修改给定title的record的某一个字段
     _update_field_in_tube_top() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the given title is empty in function:_update_field_in_tube_top"
-            return 1
-        fi
-        if [[ -z "${2}" ]]; then
-            echo "error:the given field name is empty in function:_update_field_in_tube_top"
-            return 1
-        fi
-        if [[ -z "${1}" ]]; then
-            echo "error:the given new value is empty in function:_update_field_in_tube_top"
-            return 1
-        fi
+        check_parameters 1 2 3 -- "$@" || return $?
 
         local title
         local field_name
@@ -322,88 +305,56 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #解析一条record
     _get_alias_of_record() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the record is empty in function:_get_alias_of_record"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         IFS=',' read -r -a parts <<< "${1}"
         echo "${parts[1]}"
     }
 
     _get_reading_of_record() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the record is empty in function:_get_reading_of_record"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         IFS=',' read -r -a parts <<< "${1}"
         echo "${parts[2]}"
     }
 
     _get_original_total_lines_of_record() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the record is empty in function:_get_original_total_lines_of_record"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         IFS=',' read -r -a parts <<< "${1}"
         echo "${parts[3]}"
     }
 
     _get_original_next_line_of_record() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the record is empty in function:_get_original_next_line_of_record"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         IFS=',' read -r -a parts <<< "${1}"
         echo "${parts[4]}"
     }
 
     _get_cache_total_lines_of_record() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the record is empty in function:_get_cache_total_lines_of_record"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         IFS=',' read -r -a parts <<< "${1}"
         echo "${parts[5]}"
     }
 
     _get_cache_next_line_of_record() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the record is empty in function:_get_cache_next_line_of_record"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         IFS=',' read -r -a parts <<< "${1}"
         echo "${parts[6]}"
     }
 
     _get_finish_of_record() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the record is empty in function:_get_finish_of_record"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         IFS=',' read -r -a parts <<< "${1}"
         echo "${parts[7]}"
     }
 
     _get_ever_finish_of_record() {
-        #检查参数
-        if [[ -z "${1}" ]]; then
-            echo "error:the record is empty in function:_get_ever_finish_of_record"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         IFS=',' read -r -a parts <<< "${1}"
         echo "${parts[8]}"
@@ -411,10 +362,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
 
     #删除cache file
     _delete_cache_file() {
-        if [[ -z "${1}" ]]; then
-            echo "error:the parameter is empty in function:_delete_cache_file"
-            return 1
-        fi
+        check_parameters 1 -- "$@" || return $?
 
         local title="${1}"
         local cache_file
