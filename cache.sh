@@ -5,14 +5,12 @@ if [[ -z "$CACHE_LOADED" ]]; then
 
     #参数:title
     _do_cache() {
-        check_parameters 1 -- "$@" || return $?
-
-        local title record
-        title="${1}"
-        if ! record=$(_get_record "${title}"); then
-            echo "error:get record of title:${title} failed in function:_do_print"
+        local record title
+        if ! record=$(_get_record_of_the_reading_book); then
+            echo "${MSG_NO_READING_BOOK}"
             exit 1
         fi
+        title=$(_get_title_of_record "${record}")
 
         local original_total_lines original_next_line
         original_total_lines=$(_get_original_total_lines_of_record "${record}")
@@ -42,11 +40,12 @@ if [[ -z "$CACHE_LOADED" ]]; then
     }
 
     _cache() {
-        local title
-        if ! title=$(_get_title_of_the_reading_book); then
-            echo "error:get title failed in function:_cache"
-            return 1
+        local record title
+        if ! record=$(_get_record_of_the_reading_book); then
+            echo "${MSG_NO_READING_BOOK}"
+            exit 1
         fi
+        title=$(_get_title_of_record "${record}")
 
         local book_file
         book_file="${BOOKS_DIR}"/"${title}"
@@ -55,12 +54,6 @@ if [[ -z "$CACHE_LOADED" ]]; then
 
         if [[ ! -f "${book_file}" ]]; then
             echo "error:the book file:${book_file} was not found in ${BOOKS_DIR} in function:_cache"
-            exit 1
-        fi
-
-        local record
-        if ! record=$(_get_record "${title}"); then
-            echo "error:get record of title:${title} failed in function:_do_print"
             exit 1
         fi
 
@@ -75,7 +68,7 @@ if [[ -z "$CACHE_LOADED" ]]; then
         #需要做cache的3中情形:
         #1,还没有cache
         if [[ ! -f "${cache_file}" ]]; then
-            if ! _do_cache "${title}"; then
+            if ! _do_cache; then
                 echo "error:failed to do cache in function:_cache"
                 exit 1
             fi
@@ -84,7 +77,7 @@ if [[ -z "$CACHE_LOADED" ]]; then
 
         #2,cache在上次刚好被完美地消耗完了
         if ((cache_next_line == cache_total_lines + 1)); then
-            if ! _do_cache "${title}"; then
+            if ! _do_cache; then
                 echo "error:failed to do cache in function:_cache"
                 exit 1
             fi
@@ -102,7 +95,7 @@ if [[ -z "$CACHE_LOADED" ]]; then
                 #那就把cache剩下的行"回退"给book file后,再做cache
                 original_next_line=$((original_next_line - cache_left_lines))
                 _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
-                if ! _do_cache "${title}"; then
+                if ! _do_cache; then
                     echo "error:failed to do cache in function:_cache"
                     exit 1
                 fi

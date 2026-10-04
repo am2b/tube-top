@@ -304,6 +304,13 @@ if [[ -z "$IMPL_LOADED" ]]; then
     }
 
     #解析一条record
+    _get_title_of_record() {
+        check_parameters 1 -- "$@" || return $?
+
+        IFS=',' read -r -a parts <<< "${1}"
+        echo "${parts[0]}"
+    }
+
     _get_alias_of_record() {
         check_parameters 1 -- "$@" || return $?
 

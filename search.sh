@@ -9,17 +9,12 @@ search() {
     local pattern
     pattern="${1}"
 
-    local title
-    if ! title=$(_get_title_of_the_reading_book); then
-        echo "error:get title failed in function:search"
+    local record title
+    if ! record=$(_get_record_of_the_reading_book); then
+        echo "${MSG_NO_READING_BOOK}"
         exit 1
     fi
-
-    local record
-    if ! record=$(_get_record "${title}"); then
-        echo "error:get record of title:${title} failed in function:jump"
-        exit 1
-    fi
+    title=$(_get_title_of_record "${record}")
 
     local finish
     finish=$(_get_finish_of_record "${record}")
