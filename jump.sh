@@ -140,8 +140,7 @@ jump() {
             fi
             original_next_line="${back_value}"
             _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
-            #!!!如果cache_file不存在的话,这里写入的结果要实际测试一下
-            echo $((hold_cur_line - 1 - cache_total_lines + cache_next_line - SHOW_LINES_NUMBER)) > "${record_for_jump_back}"
+            echo "${hold_cur_line}" > "${record_for_jump_back}"
         else
             echo "${error_message}"
             exit 1

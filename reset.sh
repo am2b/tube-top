@@ -9,7 +9,7 @@ reset_book() {
     check_parameters 1 -- "$@" || exit $?
 
     local title
-    title=$(_get_title_from_input "${1}")
+    if ! title=$(_get_title_from_input "${1}"); then exit 1; fi
 
     _delete_cache_file "${title}"
 

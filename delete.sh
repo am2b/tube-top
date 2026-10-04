@@ -9,7 +9,7 @@ delete_book() {
 
     #判断参数是title还是alias
     local title
-    title=$(_get_title_from_input "${1}")
+    if ! title=$(_get_title_from_input "${1}"); then exit 1; fi
 
     local book_file cache_file
     book_file="${BOOKS_DIR}"/"${title}"

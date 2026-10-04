@@ -10,7 +10,7 @@ pin() {
 
     #判断参数是title还是alias
     local title
-    title=$(_get_title_from_input "${1}")
+    if ! title=$(_get_title_from_input "${1}"); then exit 1; fi
 
     #目前正在读的书的title
     local title_of_the_reading_book
