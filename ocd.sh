@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 
 SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-source "${SELF_ABS_DIR}"/global_variables.sh
+source "${SELF_ABS_DIR}"/impl.sh
 
 ocd() {
     local title
-    title=$(_get_title_of_the_reading_book)
-    if [[ -z $title ]]; then
-        echo "${MSG_NO_READING_BOOK}"
+    if ! title=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:ocd"
         exit 1
     fi
 
     local record
     if ! record=$(_get_record "${title}"); then
-        echo "error:get record of title:${title} failed in function:_do_print"
+        echo "error:get record of title:${title} failed in function:ocd"
         exit 1
     fi
 
