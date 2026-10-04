@@ -1,10 +1,52 @@
 #!/usr/bin/env bash
 
+#source是在当前shell进程里执行的,被source的脚本里不要用exit
+
 SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 
 if [[ -z "$IMPL_LOADED" ]]; then
     export IMPL_LOADED=1
+
+    #检查参数
+    #用法示例(第1,2,3个参数是必须的,不是可选参数):check_parameters 1 2 3 -- "$@" || return/exit $?
+    check_parameters() {
+        #FUNCNAME[0]:当前正在执行的函数(这里是check_parameters),FUNCNAME[1]:调用者
+        #:-<script>:万一check_parameters在脚本顶层(没有外层函数)被调用,FUNCNAME[1]未设置,就显示<script>
+        local fn=${FUNCNAME[1]:-<script>}
+        #存储序号(1 2 3)的数组
+        local idx
+        idx=()
+
+        #把--之前的所有token都收进idx
+        while (($#)) && [[ $1 != -- ]]; do
+            idx+=("$1")
+            shift
+        done
+
+        #make sure "--" 存在
+        if (($# == 0)); then
+            printf 'usage: check_parameters <idx...> -- <args...>\n' >&2
+            return 2
+        fi
+        shift
+
+        #遍历序号
+        for i in "${idx[@]}"; do
+            #检查参数个数够不够
+            if ((i > $#)); then
+                printf 'error: missing parameter %d in %s\n' "$i" "$fn" >&2
+                return 1
+            fi
+
+            #检查参数是不是空串
+            #${!i}:是间接展开,把i的值当作变量名,再取那个变量的值
+            [[ -n ${!i} ]] || {
+                printf 'error: the parameter %d is empty in %s\n' "$i" "$fn" >&2
+                return 1
+            }
+        done
+    }
 
     _get_config_value() {
         if (("$#" == 1)); then
@@ -53,7 +95,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
                 echo 9
                 ;;
             *)
-                exit 1
+                return 1
                 ;;
         esac
     }
@@ -63,7 +105,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the title is empty in function:_get_record"
-            exit 1
+            return 1
         fi
 
         local title
@@ -100,7 +142,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
     _get_title_from_input() {
         if [[ -z "${1}" ]]; then
             echo "error:the parameter is empty in function:_get_title_from_input"
-            exit 1
+            return 1
         fi
 
         input="$1"
@@ -126,7 +168,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
                 ;;
             *)
                 echo "error:the parameter is neither title nor an alias in function:reset_book"
-                exit 1
+                return 1
                 ;;
         esac
 
@@ -204,15 +246,15 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the given title is empty in function:_update_field_in_tube_top"
-            exit 1
+            return 1
         fi
         if [[ -z "${2}" ]]; then
             echo "error:the given field name is empty in function:_update_field_in_tube_top"
-            exit 1
+            return 1
         fi
         if [[ -z "${1}" ]]; then
             echo "error:the given new value is empty in function:_update_field_in_tube_top"
-            exit 1
+            return 1
         fi
 
         local title
@@ -283,7 +325,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the record is empty in function:_get_alias_of_record"
-            exit 1
+            return 1
         fi
 
         IFS=',' read -r -a parts <<< "${1}"
@@ -294,7 +336,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the record is empty in function:_get_reading_of_record"
-            exit 1
+            return 1
         fi
 
         IFS=',' read -r -a parts <<< "${1}"
@@ -305,7 +347,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the record is empty in function:_get_original_total_lines_of_record"
-            exit 1
+            return 1
         fi
 
         IFS=',' read -r -a parts <<< "${1}"
@@ -316,7 +358,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the record is empty in function:_get_original_next_line_of_record"
-            exit 1
+            return 1
         fi
 
         IFS=',' read -r -a parts <<< "${1}"
@@ -327,7 +369,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the record is empty in function:_get_cache_total_lines_of_record"
-            exit 1
+            return 1
         fi
 
         IFS=',' read -r -a parts <<< "${1}"
@@ -338,7 +380,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the record is empty in function:_get_cache_next_line_of_record"
-            exit 1
+            return 1
         fi
 
         IFS=',' read -r -a parts <<< "${1}"
@@ -349,7 +391,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the record is empty in function:_get_finish_of_record"
-            exit 1
+            return 1
         fi
 
         IFS=',' read -r -a parts <<< "${1}"
@@ -360,7 +402,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         #检查参数
         if [[ -z "${1}" ]]; then
             echo "error:the record is empty in function:_get_ever_finish_of_record"
-            exit 1
+            return 1
         fi
 
         IFS=',' read -r -a parts <<< "${1}"
@@ -371,7 +413,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
     _delete_cache_file() {
         if [[ -z "${1}" ]]; then
             echo "error:the parameter is empty in function:_delete_cache_file"
-            exit 1
+            return 1
         fi
 
         local title="${1}"

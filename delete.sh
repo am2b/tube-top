@@ -5,9 +5,7 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 delete_book() {
-    if [[ -z "${1}" ]]; then
-        echo "error:the parameter is empty in function:reset_book"
-    fi
+    check_parameters 1 -- "$@" || exit $?
 
     #判断参数是title还是alias
     local title
@@ -33,6 +31,4 @@ delete_book() {
             pin "${title_previous}"
         fi
     fi
-
-    exit 0
 }

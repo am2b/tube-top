@@ -6,11 +6,7 @@ source "${SELF_ABS_DIR}"/impl.sh
 
 #参数:原始文件的路径
 add_book() {
-    #检查参数
-    if [[ -z "${1}" ]]; then
-        echo "error:the parameter is empty in function:add_book"
-        exit 1
-    fi
+    check_parameters 1 -- "$@" || exit $?
 
     local origin_file="${1}"
 
@@ -57,6 +53,4 @@ add_book() {
     cache_next_line=0
     finish=false
     echo "${title}","${alias_name}","${reading}","${original_total_lines}","${original_next_line}","${cache_total_lines}","${cache_next_line}","${finish}","${ever_finished}" >> "${TUBE_TOP}"
-
-    exit 0
 }

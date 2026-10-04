@@ -5,6 +5,8 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 sort_lines_by_alias() {
+    check_parameters 1 -- "$@" || return $?
+
     local sorted_tube_top="${1}"
     local none_records=/tmp/none_records
     local sorted_records=/tmp/sorted_records
@@ -29,7 +31,10 @@ sort_lines_by_alias() {
 list_all_books() {
     #依据alias排序
     local sorted_tube_top=/tmp/sorted_tube_top
-    sort_lines_by_alias "${sorted_tube_top}"
+    if ! sort_lines_by_alias "${sorted_tube_top}"; then
+        echo "error:sort lines by alias failed in function:list_all_books"
+        exit 1
+    fi
 
     local title
     title=$(_get_title_of_the_reading_book)
@@ -110,7 +115,4 @@ list_all_books() {
 }' "${sorted_tube_top}"
 
     rm "${sorted_tube_top}"
-
-    #仅查询,无需写入记录
-    exit 0
 }

@@ -7,9 +7,7 @@ source "${SELF_ABS_DIR}"/cache.sh
 
 #参数:[+/-]num/0/e(无符号整数,有符号整数,0,e)
 jump() {
-    if [[ -z "${1}" ]]; then
-        echo "error:the parameter is empty in function:jump"
-    fi
+    check_parameters 1 -- "$@" || exit $?
 
     local number="$1"
     local error_message

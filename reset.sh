@@ -6,10 +6,7 @@ source "${SELF_ABS_DIR}"/impl.sh
 
 #参数:title或者alias
 reset_book() {
-    if [[ -z "${1}" ]]; then
-        echo "error:the parameter is empty in function:reset_book"
-        exit 1
-    fi
+    check_parameters 1 -- "$@" || exit $?
 
     local title
     title=$(_get_title_from_input "${1}")

@@ -5,11 +5,7 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 set_alias() {
-    #检查参数
-    if [[ -z "${1}" ]]; then
-        echo "error:the parameter is empty in function:set_alias"
-        exit 1
-    fi
+    check_parameters 1 -- "$@" || exit $?
 
     local alias
     alias="${1}"
@@ -22,6 +18,4 @@ set_alias() {
     fi
 
     _update_field_in_tube_top "${title}" "ALIAS" "${alias}"
-
-    exit 0
 }

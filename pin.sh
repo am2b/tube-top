@@ -6,11 +6,7 @@ source "${SELF_ABS_DIR}"/impl.sh
 
 #参数:title或者alias
 pin() {
-    #检查参数
-    if [[ -z "${1}" ]]; then
-        echo "error:the parameter is empty in function:pin"
-        exit 1
-    fi
+    check_parameters 1 -- "$@" || exit $?
 
     #判断参数是title还是alias
     local title

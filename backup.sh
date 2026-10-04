@@ -4,13 +4,7 @@ SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 
 delete_old_files() {
-    if [[ -z "${1}" ]]; then
-        echo "error:the parameter is empty in function:delete_old_files"
-    fi
-
-    if [[ -z "${2}" ]]; then
-        echo "error:the parameter is empty in function:delete_old_files"
-    fi
+    check_parameters 1 2 -- "$@" || return $?
 
     local dest_dir
     local keep_num
@@ -61,5 +55,8 @@ backup() {
     cp "${TUBE_TOP}" "${BACKUP_DIR}/${backup_name}"
 
     #删除旧的备份文件
-    delete_old_files "${BACKUP_DIR}" 100
+    if ! delete_old_files "${BACKUP_DIR}" 100; then
+        echo "error:failed to delete old backups"
+        exit 1
+    fi
 }

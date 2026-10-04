@@ -33,8 +33,6 @@ ocd() {
     _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
 
     _delete_cache_file "${title}"
-
-    exit 0
 }
 
 #Obsessive-Compulsive Disorder(强迫症)

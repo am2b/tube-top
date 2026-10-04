@@ -5,8 +5,6 @@ source "${SELF_ABS_DIR}"/global_variables.sh
 source "${SELF_ABS_DIR}"/impl.sh
 
 quickly_switch() {
-    #backup
-
     local title
     title=$(_get_title_of_the_previous)
     if [[ -n "${title}" ]]; then

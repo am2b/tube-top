@@ -4,9 +4,7 @@ SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
 
 search() {
-    if [[ -z "${1}" ]]; then
-        echo "error:the parameter is empty in function:search"
-    fi
+    check_parameters 1 -- "$@" || exit $?
 
     local pattern
     pattern="${1}"
@@ -73,6 +71,4 @@ search() {
         echo -e "${matched_lines["$origin_relative_line_num"]}"
         if [[ "${counter}" -lt "${array_size}" ]]; then echo; fi
     done
-
-    exit 0
 }
