@@ -66,7 +66,15 @@ usage() {
 }
 
 parse_options() {
+    local option_count=0
+
     while getopts ":ha:p:n:qsguj:f:or:d:lb" opt; do
+        ((option_count++))
+        if ((option_count > 1)); then
+            echo "error: only one option is allowed, but you gave several" >&2
+            exit 1
+        fi
+
         case "${opt}" in
             h)
                 usage

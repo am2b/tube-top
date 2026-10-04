@@ -109,6 +109,8 @@ jump() {
             return 0
         else
             number=$((original_next_line - cache_total_lines + cache_up_lines - number_without_sign))
+            #往前翻最多翻到第1行,不能是负数
+            if ((number < 1)); then number=1; fi
         fi
     fi
 
