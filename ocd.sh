@@ -26,9 +26,9 @@ ocd() {
     local next_line
     next_line=$((original_next_line - cache_total_lines + cache_next_line - 1))
     #整数除法自动向下取整
-    local batch_num=$(((next_line - 1) / 10))
+    local batch_num=$(((next_line - 1) / SHOW_LINES_NUMBER))
     #第n批次所对应的行号:n * 10 + 1 ~ (n + 1) * 10
-    original_next_line=$((batch_num * 10 + 1))
+    original_next_line=$((batch_num * SHOW_LINES_NUMBER + 1))
     _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
 
     _delete_cache_file "${title}"

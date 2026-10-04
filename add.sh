@@ -52,5 +52,6 @@ add_book() {
     cache_total_lines=0
     cache_next_line=0
     finish=false
+    ever_finished=false
     echo "${title}","${alias_name}","${reading}","${original_total_lines}","${original_next_line}","${cache_total_lines}","${cache_next_line}","${finish}","${ever_finished}" >> "${TUBE_TOP}"
 }

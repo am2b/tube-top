@@ -140,8 +140,8 @@ if [[ -z "$IMPL_LOADED" ]]; then
     _get_title_from_input() {
         check_parameters 1 -- "$@" || return $?
 
+        local input title
         input="$1"
-        local title
 
         result=$(awk -F',' -v value="$input" '
             $1 == value {
@@ -152,7 +152,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
                 print "2"
                 exit
             }
-            ' input.txt)
+            ' "${TUBE_TOP}")
 
         case "$result" in
             1)

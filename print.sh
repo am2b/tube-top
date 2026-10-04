@@ -138,6 +138,12 @@ print() {
 
     _do_print
 
+    #再次读取record
+    if ! record=$(_get_record "${title}"); then
+        echo "error:get record of title:${title} failed in function:print"
+        exit 1
+    fi
+
     #检查是否读完了
     local original_total_lines original_next_line
     original_total_lines=$(_get_original_total_lines_of_record "${record}")
@@ -149,7 +155,7 @@ print() {
 
     if [[ "${original_next_line}" -gt "${original_total_lines}" && "${cache_next_line}" -gt "${cache_total_lines}" ]]; then
         _update_field_in_tube_top "${title}" "FINISH" true
-        _update_field_in_tube_top "${title}" "EVER_FINISH" true
+        _update_field_in_tube_top "${title}" "EVER_FINISHED" true
 
         echo "You have finished the book:${title}"
     fi
