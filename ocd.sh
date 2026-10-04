@@ -32,6 +32,8 @@ ocd() {
     _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
 
     _delete_cache_file "${title}"
+    _update_field_in_tube_top "${title}" "CACHE_TOTAL_LINES" 0
+    _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" 1
 }
 
 #Obsessive-Compulsive Disorder(强迫症)
