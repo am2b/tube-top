@@ -366,4 +366,17 @@ if [[ -z "$IMPL_LOADED" ]]; then
         IFS=',' read -r -a parts <<< "${1}"
         echo "${parts[8]}"
     }
+
+    #删除cache file
+    _delete_cache_file() {
+        if [[ -z "${1}" ]]; then
+            echo "error:the parameter is empty in function:_delete_cache_file"
+            exit 1
+        fi
+
+        local title="${1}"
+        local cache_file
+        cache_file="${CACHE_DIR}"/"${title}"
+        if [[ -f "${cache_file}" ]]; then rm "${cache_file}"; fi
+    }
 fi

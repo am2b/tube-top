@@ -36,9 +36,6 @@ jump() {
     cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
     cache_next_line=$(_get_cache_next_line_of_record "${record}")
 
-    local cache_file
-    cache_file="${CACHE_DIR}"/"${title}"
-
     local record_for_jump_back
     record_for_jump_back=/tmp/tube_top_jump
 
@@ -109,8 +106,7 @@ jump() {
             exit 1
         fi
 
-        if [[ -f "${cache_file}" ]]; then rm "${cache_file}"; fi
-        #_cache
+        _delete_cache_file "${title}"
     else
         echo "${error_message}"
         exit 1
@@ -139,9 +135,6 @@ jump_to_last() {
     cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
     cache_next_line=$(_get_cache_next_line_of_record "${record}")
 
-    local cache_file
-    cache_file="${CACHE_DIR}"/"${title}"
-
     #缓存中下次要读取的行,其上面的行数
     local cache_up_lines
     cache_up_lines=$((cache_next_line - 1))
@@ -152,9 +145,6 @@ jump_to_last() {
         #回退
         original_next_line=$((original_next_line - cache_total_lines + cache_up_lines - SHOW_LINES_NUMBER))
         _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
-        if [[ -f "${BOOK_CACHE_FILE}" ]]; then rm "${BOOK_CACHE_FILE}"; fi
-
-        #认为做cache只是在打印的时候才做的事情
-        #_cache
+        _delete_cache_file "${title}"
     fi
 }

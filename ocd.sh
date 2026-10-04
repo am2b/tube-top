@@ -32,9 +32,7 @@ ocd() {
     original_next_line=$((batch_num * 10 + 1))
     _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
 
-    local cache_file
-    cache_file="${CACHE_DIR}"/"${title}"
-    if [[ -f "${cache_file}" ]]; then rm "${cache_file}"; fi
+    _delete_cache_file "${title}"
 
     exit 0
 }

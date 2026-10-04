@@ -14,9 +14,7 @@ reset_book() {
     local title
     title=$(_get_title_from_input "${1}")
 
-    local cache_file
-    cache_file="${CACHE_DIR}"/"${title}"
-    if [[ -f "${cache_file}" ]]; then rm "${cache_file}"; fi
+    _delete_cache_file "${title}"
 
     _update_field_in_tube_top "${title}" "READING" false
     _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" 1
