@@ -12,10 +12,6 @@ _hold_the_starting_line_number() {
 
     local title
     title="${1}"
-    if ! title=$(_get_title_of_the_reading_book); then
-        echo "error:get title failed in function:_hold_the_starting_line_number"
-        exit 1
-    fi
 
     local record
     if ! record=$(_get_record "${title}"); then
@@ -71,6 +67,11 @@ jump() {
 
     local record_for_jump_back
     record_for_jump_back=/tmp/tube_top_jump
+
+    #+/-0
+    if [[ "$number" =~ ^[+-]0+$ ]]; then
+        return 0
+    fi
 
     #如果number是一个以+开头的整数‌的话
     if [[ "$number" =~ ^\+[0-9]+$ ]]; then
