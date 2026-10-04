@@ -37,7 +37,10 @@ list_all_books() {
     fi
 
     local title
-    title=$(_get_title_of_the_reading_book)
+    if ! title=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:list_all_books"
+        exit 1
+    fi
 
     #当前实际已经阅读了的行数
     local cur_real_line_num

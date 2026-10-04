@@ -22,7 +22,10 @@ delete_book() {
 
     #删除完成后,检查是否存在reading的书
     local title_reading
-    title_reading=$(_get_title_of_the_reading_book)
+    if ! title_reading=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:delete_book"
+        return 1
+    fi
     if [[ -z "${title_reading}" ]]; then
         #再检查是否有previous,如果有的话,将其设置为reading
         local title_previous

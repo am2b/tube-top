@@ -10,12 +10,12 @@ search() {
     pattern="${1}"
 
     local title
-    title=$(_get_title_of_the_reading_book)
-    if [[ -z $title ]]; then
-        echo "${MSG_NO_READING_BOOK}"
+    if ! title=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:search"
         exit 1
     fi
 
+    local record
     if ! record=$(_get_record "${title}"); then
         echo "error:get record of title:${title} failed in function:jump"
         exit 1
@@ -40,6 +40,7 @@ search() {
     local search_from_line_number
     search_from_line_number=$((original_next_line - 1 - cache_total_lines + cache_next_line))
 
+    local book_file
     book_file="${BOOKS_DIR}"/"${title}"
 
     declare -A matched_lines

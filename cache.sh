@@ -44,7 +44,7 @@ if [[ -z "$CACHE_LOADED" ]]; then
     _cache() {
         local title
         if ! title=$(_get_title_of_the_reading_book); then
-            echo "error:failed to get title of the reading book in function:_cache"
+            echo "error:get title failed in function:_cache"
             return 1
         fi
 

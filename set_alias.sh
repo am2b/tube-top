@@ -11,10 +11,9 @@ set_alias() {
     alias="${1}"
 
     local title
-    title=$(_get_title_of_the_reading_book)
-    if [[ -z $title ]]; then
-        echo "${MSG_NO_READING_BOOK}"
-        exit 1
+    if ! title=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:set_alias"
+        return 1
     fi
 
     _update_field_in_tube_top "${title}" "ALIAS" "${alias}"

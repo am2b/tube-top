@@ -12,9 +12,8 @@ _hold_the_starting_line_number() {
 
     local title
     title="${1}"
-    title=$(_get_title_of_the_reading_book)
-    if [[ -z $title ]]; then
-        echo "${MSG_NO_READING_BOOK}"
+    if ! title=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:_hold_the_starting_line_number"
         exit 1
     fi
 
@@ -51,9 +50,8 @@ jump() {
     error_message="parameter error, please enter a line number, you can use a positive or negative sign to indicate how many lines to jump back or forward"
 
     local title
-    title=$(_get_title_of_the_reading_book)
-    if [[ -z $title ]]; then
-        echo "${MSG_NO_READING_BOOK}"
+    if ! title=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:jump"
         exit 1
     fi
 
@@ -160,9 +158,8 @@ jump() {
 #没有参数
 jump_to_last() {
     local title
-    title=$(_get_title_of_the_reading_book)
-    if [[ -z $title ]]; then
-        echo "${MSG_NO_READING_BOOK}"
+    if ! title=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:jump_to_last"
         exit 1
     fi
 

@@ -8,10 +8,9 @@ source "${SELF_ABS_DIR}"/cache.sh
 #没有参数
 _do_print() {
     local title
-    title=$(_get_title_of_the_reading_book)
-    if [[ -z $title ]]; then
-        echo "${MSG_NO_READING_BOOK}"
-        exit 1
+    if ! title=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:_do_print"
+        return 1
     fi
 
     local record
@@ -114,10 +113,9 @@ _do_print() {
 #没有参数
 print() {
     local title
-    title=$(_get_title_of_the_reading_book)
-    if [[ -z $title ]]; then
-        echo "${MSG_NO_READING_BOOK}"
-        exit 1
+    if ! title=$(_get_title_of_the_reading_book); then
+        echo "error:get title failed in function:print"
+        return 1
     fi
 
     local record
