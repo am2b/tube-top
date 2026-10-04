@@ -2,6 +2,7 @@
 
 SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
+source "${SELF_ABS_DIR}"/impl.sh
 
 delete_old_files() {
     check_parameters 1 2 -- "$@" || return $?
@@ -40,11 +41,6 @@ backup() {
 
     if [[ ! -d "${BACKUP_DIR}" ]]; then
         mkdir -p "${BACKUP_DIR}"
-    fi
-
-    if [[ ! -d "${HOME}"/.trash ]]; then
-        echo "error:no trash can found in function:backup"
-        exit 1
     fi
 
     local TIMESTAMP

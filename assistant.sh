@@ -85,8 +85,11 @@ parse_options() {
                     add_book "$OPTARG" "${!OPTIND}"
                     #更新OPTIND,让它指向下一个未被解析的命令行参数
                     #排除选项
-                    #if [[ "${!OPTIND}" != -* ]] && [ -n "${!OPTIND}" ]; then
-                    OPTIND=$((OPTIND + 1))
+                    if [[ "${!OPTIND}" != -* ]] && [ -n "${!OPTIND}" ]; then
+                        OPTIND=$((OPTIND + 1))
+                    else
+                        exit 1
+                    fi
                 else
                     add_book "$OPTARG"
                 fi
@@ -122,8 +125,6 @@ parse_options() {
                 reset_book "$OPTARG"
                 ;;
             d)
-                backup
-
                 delete_book "$OPTARG"
                 ;;
             l)

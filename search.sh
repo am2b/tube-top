@@ -2,6 +2,7 @@
 
 SELF_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${SELF_ABS_DIR}"/global_variables.sh
+source "${SELF_ABS_DIR}"/impl.sh
 
 search() {
     check_parameters 1 -- "$@" || exit $?

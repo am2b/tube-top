@@ -108,7 +108,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         title="${1}"
 
         local record
-        record=$(sed -n "/^$title,/p" "${TUBE_TOP}")
+        record=$(awk -F, -v title="$title" '$1 == title { print; exit }' "${TUBE_TOP}")
         if [[ -n $record ]]; then
             echo "${record}"
             return 0
@@ -143,6 +143,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         local input title
         input="$1"
 
+        local result
         result=$(awk -F',' -v value="$input" '
             $1 == value {
                 print "1"
@@ -248,7 +249,7 @@ if [[ -z "$IMPL_LOADED" ]]; then
         new_value="${3}"
 
         local field_num
-        field_num=$(_get_field_num "${field_name}")
+        if ! field_num=$(_get_field_num "${field_name}"); then return 1; fi
         awk -F, -v title="$title" -v field_num="$field_num" -v new_value="$new_value" '
             BEGIN {OFS=","} 
             $1 == title { $(field_num) = new_value } {print}

@@ -38,7 +38,7 @@ add_book() {
 
     #register this book
     local original_total_lines
-    original_total_lines=$(wc -l < "${book_file}" | xargs)
+    original_total_lines=$(awk 'END{print NR}' "${book_file}")
 
     #如果传递了"别名"作为第二个参数的话
     local alias_name="none"

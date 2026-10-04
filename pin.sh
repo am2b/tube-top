@@ -14,10 +14,8 @@ pin() {
 
     #目前正在读的书的title
     local title_of_the_reading_book
-    if ! title_of_the_reading_book=$(_get_title_of_the_reading_book); then
-        echo "error:get title failed in function:pin"
-        exit 1
-    fi
+    #title_of_the_reading_book可以为空
+    title_of_the_reading_book=$(_get_title_of_the_reading_book)
 
     if [[ -n "${title_of_the_reading_book}" ]]; then
         #是否在重复pin
