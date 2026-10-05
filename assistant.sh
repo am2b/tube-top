@@ -15,7 +15,7 @@ required_tools() {
         fi
     done
 
-    tools=("rg" "realpath" "trash" "bc")
+    tools=("rg" "fd" "realpath" "trash" "bc")
     for tool in "${tools[@]}"; do
         if ! command -v "$tool" > /dev/null 2>&1; then
             echo "$tool 未安装"
@@ -80,12 +80,12 @@ parse_options() {
                 usage
                 ;;
             a)
-                if [[ "${!OPTIND}" == -* ]]; then
+                if [[ "${!OPTIND:-}" == -* ]]; then
                     echo "error: only one option is allowed, but you gave several" >&2
                     exit 1
                 fi
                 #${!OPTIND}使用了间接引用(indirect reference)来获取OPTIND指向的变量的值
-                if [ -n "${!OPTIND}" ]; then
+                if [ -n "${!OPTIND:-}" ]; then
                     add_book "$OPTARG" "${!OPTIND}"
                     OPTIND=$((OPTIND + 1))
                 else

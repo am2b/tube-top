@@ -14,7 +14,7 @@ delete_book() {
     if [[ -f "${book_file}" ]]; then rm "${book_file}"; fi
 
     #删除record
-    sed -i "/^$title/d" "${TUBE_TOP}"
+    awk -F, -v title="$title" '$1 != title' "${TUBE_TOP}" > /tmp/tube_top_del.txt && mv /tmp/tube_top_del.txt "${TUBE_TOP}"
 
     #删除完成后,检查是否存在reading的书
     local title_reading

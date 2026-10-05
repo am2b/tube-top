@@ -15,16 +15,23 @@ delete_old_files() {
     done
 
     local find_counts
-    #递归搜索
-    find_counts=$(find "${dest_dir}" \( "${prune_expr[@]}" -false \) -o -type f -print | wc -l)
+    #递归搜索(GNU find版本)
+    #find_counts=$(find "${dest_dir}" \( "${prune_expr[@]}" -false \) -o -type f -print | wc -l)
+    #if ((find_counts > keep_num)); then
+    #    find "${dest_dir}" \( "${prune_expr[@]}" -false \) -o -type f -printf "%T@ %p\0" |
+    #        sort -zn |
+    #        head -z -n "$((find_counts - keep_num))" |
+    #        cut -z -d ' ' -f2- |
+    #        while IFS= read -r -d '' file_to_be_deleted; do
+    #            trash "${file_to_be_deleted}"
+    #        done
+    #fi
+    #递归搜索(fd版本)
+    find_counts=$(fd -t f --absolute-path . "${dest_dir}" | wc -l | tr -d ' ')
     if ((find_counts > keep_num)); then
-        find "${dest_dir}" \( "${prune_expr[@]}" -false \) -o -type f -printf "%T@ %p\0" |
-            sort -zn |
-            head -z -n "$((find_counts - keep_num))" |
-            cut -z -d ' ' -f2- |
-            while IFS= read -r -d '' file_to_be_deleted; do
-                trash "${file_to_be_deleted}"
-            done
+        fd -t f --absolute-path . "${dest_dir}" | sort | head -n "$((find_counts - keep_num))" | while read -r file_to_be_deleted; do
+            trash "${file_to_be_deleted}"
+        done
     fi
 }
 

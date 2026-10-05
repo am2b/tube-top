@@ -8,7 +8,7 @@ _update_finish_state() {
     local title="${1}"
     local record
     if ! record=$(_get_record "${title}"); then
-        echo "${MSG_NO_READING_BOOK}" >&2
+        echo "error:failed to get record of ${title}" >&2
         return 1
     fi
 

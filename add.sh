@@ -7,12 +7,12 @@ add_book() {
     local origin_file="${1}"
 
     if [[ ! -f $origin_file ]]; then
-        echo "$origin_file is not a normal file in function:add_book"
+        echo "error:${origin_file} is not a normal file in function:add_book" >&2
         exit 1
     fi
 
     if [[ ! -r $origin_file ]]; then
-        echo "$origin_file is unreadable in function:add_book"
+        echo "error:${origin_file} is unreadable in function:add_book" >&2
         exit 1
     fi
 
@@ -20,6 +20,12 @@ add_book() {
     local book_file
     #title中包含后缀名(basename的结果包含后缀名)
     title=$(basename "${origin_file}")
+    #title里面不允许包含逗号
+    if [[ "${title}" == *,* ]]; then
+        echo "error:title must not contain commas" >&2
+        exit 1
+    fi
+
     #数据库中的原始文件
     book_file="${BOOKS_DIR}"/"${title}"
 
@@ -38,7 +44,7 @@ add_book() {
 
     #如果传递了"别名"作为第二个参数的话
     local alias_name="none"
-    if [[ -n "${2}" ]]; then
+    if [[ -n "${2:-}" ]]; then
         alias_name="${2}"
     fi
 

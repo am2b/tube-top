@@ -19,6 +19,7 @@ pin() {
         fi
 
         #将目前正在读的书的状态改为:previous
+        awk -F, 'BEGIN{OFS=","} $3 == "previous" { $3 = "false" } { print }' "${TUBE_TOP}" > /tmp/tube_top_pin.txt && mv /tmp/tube_top_pin.txt "${TUBE_TOP}"
         _update_field_in_tube_top "${title_of_the_reading_book}" "READING" "previous"
     fi
 

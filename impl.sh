@@ -157,7 +157,7 @@ _get_title_from_input() {
             title=$(_get_title_by_alias "${input}")
             ;;
         *)
-            echo "error:the parameter is neither title nor an alias in function:reset_book" >&2
+            echo "error:the parameter is neither title nor an alias in function:_get_title_from_input" >&2
             return 1
             ;;
     esac
@@ -184,7 +184,7 @@ _get_record_of_the_reading_book() {
 #获取正在读的书的title
 _get_title_of_the_reading_book() {
     local record
-    local title
+    local title=""
     if record=$(_get_record_of_the_reading_book); then
         IFS=',' read -r -a parts <<< "${record}"
         title="${parts[0]}"
@@ -217,7 +217,7 @@ _query_the_previous_reading_book_in_tube_top() {
 #返回previous的title
 _get_title_of_the_previous() {
     local record
-    local title
+    local title=""
     if record=$(_query_the_previous_reading_book_in_tube_top); then
         IFS=',' read -r -a parts <<< "${record}"
         title="${parts[0]}"

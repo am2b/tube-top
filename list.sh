@@ -21,7 +21,7 @@ sort_lines_by_alias() {
         mv "${sorted_records}" "${sorted_tube_top}"
     fi
 
-    rm "${none_records}" "${sorted_records}"
+    rm -f "${none_records}" "${sorted_records}"
 }
 
 list_all_books() {
@@ -38,7 +38,7 @@ list_all_books() {
 
     #当前实际已经阅读了的行数
     local cur_real_line_num
-    local percent
+    local percent=""
 
     if [[ -n "${title}" ]]; then
         local record
