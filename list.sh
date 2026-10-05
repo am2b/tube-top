@@ -21,14 +21,14 @@ sort_lines_by_alias() {
         mv "${sorted_records}" "${sorted_tube_top}"
     fi
 
-    rm -f "${none_records}" "${sorted_records}"
+    rm "${none_records}" "${sorted_records}"
 }
 
 list_all_books() {
     #依据alias排序
     local sorted_tube_top=/tmp/sorted_tube_top
     if ! sort_lines_by_alias "${sorted_tube_top}"; then
-        echo "error:sort lines by alias failed in function:list_all_books"
+        echo "error:sort lines by alias failed in function:list_all_books" >&2
         exit 1
     fi
 
@@ -43,7 +43,7 @@ list_all_books() {
     if [[ -n "${title}" ]]; then
         local record
         if ! record=$(_get_record "${title}"); then
-            echo "error:get record of title:${title} failed in function:_do_print"
+            echo "error:get record of title:${title} failed in function:_do_print" >&2
             exit 1
         fi
 

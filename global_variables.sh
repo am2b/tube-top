@@ -24,6 +24,9 @@ CACHE_DIR="${ROOT_DIR}"/cache
 #数据库文件(~/.tube-top/tube_top)的格式
 TUBE_TOP="${ROOT_DIR}"/tube_top
 
+#for -j 0
+HOLD_FOR_JUMP_BACK=/tmp/tube_top_jump
+
 #messages
 MSG_NO_READING_BOOK=$(
     cat << EOF

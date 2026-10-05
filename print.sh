@@ -4,7 +4,7 @@
 _do_print() {
     local record title
     if ! record=$(_get_record_of_the_reading_book); then
-        echo "${MSG_NO_READING_BOOK}"
+        echo "${MSG_NO_READING_BOOK}" >&2
         exit 1
     fi
     title=$(_get_title_of_record "${record}")
@@ -104,7 +104,7 @@ _do_print() {
 print() {
     local record title
     if ! record=$(_get_record_of_the_reading_book); then
-        echo "${MSG_NO_READING_BOOK}"
+        echo "${MSG_NO_READING_BOOK}" >&2
         exit 1
     fi
     title=$(_get_title_of_record "${record}")
@@ -123,7 +123,7 @@ print() {
 
     #再次读取record
     if ! record=$(_get_record "${title}"); then
-        echo "error:get record of title:${title} failed in function:print"
+        echo "error:get record of title:${title} failed in function:print" >&2
         exit 1
     fi
 

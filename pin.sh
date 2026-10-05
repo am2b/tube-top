@@ -4,7 +4,6 @@
 pin() {
     check_parameters 1 -- "$@" || exit $?
 
-    #判断参数是title还是alias
     local title
     if ! title=$(_get_title_from_input "${1}"); then exit 1; fi
 
@@ -25,4 +24,6 @@ pin() {
 
     #pin
     _update_field_in_tube_top "${title}" "READING" true
+
+    if [[ -f "${HOLD_FOR_JUMP_BACK}" ]]; then rm "${HOLD_FOR_JUMP_BACK}"; fi
 }

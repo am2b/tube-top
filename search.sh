@@ -8,7 +8,7 @@ search() {
 
     local record title
     if ! record=$(_get_record_of_the_reading_book); then
-        echo "${MSG_NO_READING_BOOK}"
+        echo "${MSG_NO_READING_BOOK}" >&2
         exit 1
     fi
     title=$(_get_title_of_record "${record}")

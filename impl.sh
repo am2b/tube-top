@@ -157,7 +157,7 @@ _get_title_from_input() {
             title=$(_get_title_by_alias "${input}")
             ;;
         *)
-            echo "error:the parameter is neither title nor an alias in function:reset_book"
+            echo "error:the parameter is neither title nor an alias in function:reset_book" >&2
             return 1
             ;;
     esac

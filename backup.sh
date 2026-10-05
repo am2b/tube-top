@@ -31,7 +31,7 @@ delete_old_files() {
 backup() {
     #注意:如果config文件里面的backup_dir写成了~/some_dir的形式的话,从config中读取的值是一个字符串,而字符串里面的~是不会自动解析的
     if [[ -z "${BACKUP_DIR}" ]]; then
-        echo "error:backup dir:${BACKUP_DIR} is empty in function:backup"
+        echo "error:backup dir:${BACKUP_DIR} is empty in function:backup" >&2
         exit 1
     fi
 
@@ -48,7 +48,7 @@ backup() {
 
     #删除旧的备份文件
     if ! delete_old_files "${BACKUP_DIR}" 100; then
-        echo "error:failed to delete old backups"
+        echo "error:failed to delete old backups" >&2
         exit 1
     fi
 }

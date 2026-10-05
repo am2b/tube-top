@@ -4,7 +4,7 @@
 _do_cache() {
     local record title
     if ! record=$(_get_record_of_the_reading_book); then
-        echo "${MSG_NO_READING_BOOK}"
+        echo "${MSG_NO_READING_BOOK}" >&2
         exit 1
     fi
     title=$(_get_title_of_record "${record}")
@@ -39,7 +39,7 @@ _do_cache() {
 _cache() {
     local record title
     if ! record=$(_get_record_of_the_reading_book); then
-        echo "${MSG_NO_READING_BOOK}"
+        echo "${MSG_NO_READING_BOOK}" >&2
         exit 1
     fi
     title=$(_get_title_of_record "${record}")
@@ -50,7 +50,7 @@ _cache() {
     cache_file="${CACHE_DIR}"/"${title}"
 
     if [[ ! -f "${book_file}" ]]; then
-        echo "error:the book file:${book_file} was not found in ${BOOKS_DIR} in function:_cache"
+        echo "error:the book file:${book_file} was not found in ${BOOKS_DIR} in function:_cache" >&2
         exit 1
     fi
 
@@ -66,7 +66,7 @@ _cache() {
     #1,还没有cache
     if [[ ! -f "${cache_file}" ]]; then
         if ! _do_cache; then
-            echo "error:failed to do cache in function:_cache"
+            echo "error:failed to do cache in function:_cache" >&2
             exit 1
         fi
         return 0
@@ -75,7 +75,7 @@ _cache() {
     #2,cache在上次刚好被完美地消耗完了
     if ((cache_next_line == cache_total_lines + 1)); then
         if ! _do_cache; then
-            echo "error:failed to do cache in function:_cache"
+            echo "error:failed to do cache in function:_cache" >&2
             exit 1
         fi
         return 0
@@ -93,7 +93,7 @@ _cache() {
             original_next_line=$((original_next_line - cache_left_lines))
             _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
             if ! _do_cache; then
-                echo "error:failed to do cache in function:_cache"
+                echo "error:failed to do cache in function:_cache" >&2
                 exit 1
             fi
             return 0

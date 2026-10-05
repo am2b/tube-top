@@ -1,11 +1,39 @@
 #!/usr/bin/env bash
 
+#更新FINISH,EVER_FINISH
+#参数:title
+_update_finish_state() {
+    check_parameters 1 -- "$@" || return $?
+
+    local title="${1}"
+    local record
+    if ! record=$(_get_record "${title}"); then
+        echo "${MSG_NO_READING_BOOK}" >&2
+        return 1
+    fi
+
+    local original_total_lines original_next_line
+    original_total_lines=$(_get_original_total_lines_of_record "${record}")
+    original_next_line=$(_get_original_next_line_of_record "${record}")
+
+    local cache_total_lines cache_next_line
+    cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
+    cache_next_line=$(_get_cache_next_line_of_record "${record}")
+
+    if ((original_next_line > original_total_lines)) && ((cache_next_line > cache_total_lines)); then
+        _update_field_in_tube_top "${title}" "FINISH" true
+        _update_field_in_tube_top "${title}" "EVER_FINISHED" true
+    else
+        _update_field_in_tube_top "${title}" "FINISH" false
+    fi
+}
+
 #记住当前这屏的起始行号,等-j 0时跳回去
 #参数:title
 _hold_the_starting_line_number() {
     local record title
     if ! record=$(_get_record_of_the_reading_book); then
-        echo "${MSG_NO_READING_BOOK}"
+        echo "${MSG_NO_READING_BOOK}" >&2
         exit 1
     fi
     title=$(_get_title_of_record "${record}")
@@ -17,14 +45,11 @@ _hold_the_starting_line_number() {
     cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
     cache_next_line=$(_get_cache_next_line_of_record "${record}")
 
-    local record_for_jump_back
-    record_for_jump_back=/tmp/tube_top_jump
-
     local pos
     pos=$((original_next_line - 1 - cache_total_lines + cache_next_line))
     #没读过一整屏就不记录,因为没东西可回跳
     if ((pos > SHOW_LINES_NUMBER)); then
-        echo $((pos - SHOW_LINES_NUMBER)) > "${record_for_jump_back}"
+        echo $((pos - SHOW_LINES_NUMBER)) > "${HOLD_FOR_JUMP_BACK}"
     fi
 }
 
@@ -38,7 +63,7 @@ jump() {
 
     local record title
     if ! record=$(_get_record_of_the_reading_book); then
-        echo "${MSG_NO_READING_BOOK}"
+        echo "${MSG_NO_READING_BOOK}" >&2
         exit 1
     fi
     title=$(_get_title_of_record "${record}")
@@ -50,9 +75,6 @@ jump() {
     local cache_total_lines cache_next_line
     cache_total_lines=$(_get_cache_total_lines_of_record "${record}")
     cache_next_line=$(_get_cache_next_line_of_record "${record}")
-
-    local record_for_jump_back
-    record_for_jump_back=/tmp/tube_top_jump
 
     #+/-0
     if [[ "$number" =~ ^[+-]0+$ ]]; then
@@ -73,6 +95,7 @@ jump() {
             _hold_the_starting_line_number
             cache_next_line=$((cache_next_line + number_without_sign))
             _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" "${cache_next_line}"
+            _update_finish_state "${title}"
             return 0
         else
             number=$((original_next_line + number_without_sign - cache_down_lines))
@@ -93,6 +116,7 @@ jump() {
             _hold_the_starting_line_number
             cache_next_line=$((cache_next_line - number_without_sign))
             _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" "${cache_next_line}"
+            _update_finish_state "${title}"
             return 0
         else
             number=$((original_next_line - cache_total_lines + cache_up_lines - number_without_sign))
@@ -117,29 +141,30 @@ jump() {
             _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
         elif ((number == 0)); then
             #jump back
-            if [[ ! -f "${record_for_jump_back}" ]]; then return 0; fi
+            if [[ ! -f "${HOLD_FOR_JUMP_BACK}" ]]; then return 0; fi
             local hold_cur_line
             hold_cur_line="${original_next_line}"
 
             local back_value
-            back_value=$(cat "${record_for_jump_back}")
+            back_value=$(cat "${HOLD_FOR_JUMP_BACK}")
             #读到负数或0就不跳
             if [[ ! "${back_value}" =~ ^[0-9]+$ ]] || ((back_value < 1)); then
                 return 0
             fi
             original_next_line="${back_value}"
             _update_field_in_tube_top "${title}" "ORIGINAL_NEXT_LINE" "${original_next_line}"
-            echo "${hold_cur_line}" > "${record_for_jump_back}"
+            echo "${hold_cur_line}" > "${HOLD_FOR_JUMP_BACK}"
         else
-            echo "${error_message}"
+            echo "${error_message}" >&2
             exit 1
         fi
 
         _delete_cache_file "${title}"
         _update_field_in_tube_top "${title}" "CACHE_TOTAL_LINES" 0
         _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" 1
+        _update_finish_state "${title}"
     else
-        echo "${error_message}"
+        echo "${error_message}" >&2
         exit 1
     fi
 }
@@ -148,7 +173,7 @@ jump() {
 jump_to_last() {
     local record title
     if ! record=$(_get_record_of_the_reading_book); then
-        echo "${MSG_NO_READING_BOOK}"
+        echo "${MSG_NO_READING_BOOK}" >&2
         exit 1
     fi
     title=$(_get_title_of_record "${record}")
@@ -179,4 +204,6 @@ jump_to_last() {
         _update_field_in_tube_top "${title}" "CACHE_TOTAL_LINES" 0
         _update_field_in_tube_top "${title}" "CACHE_NEXT_LINE" 1
     fi
+
+    _update_finish_state "${title}"
 }
